@@ -62,28 +62,28 @@
 
     * lvalue reference
       一般指：左值引用 \&
-  
+
       一定要初始化！定义引用时，程序把引用与他的初始值bind绑定在一起，而不是将初始值拷贝给引用。
       一旦初始化完成，引用将和它的初始值对象一直绑定在一起。因为无法令引用重新绑定另外一个对象，因此引用必须初始化。
       （引用只是为一个已经存在的变量起一个别名）
-  
+
   * 指针 pointer
-  
+
     \&：取地址符
     \*：解引用符
-  
+
     * 空指针：
       nullptr可以转化为任意其他的指针类型
-  
+
       ```
       int *p1 = nullptr; // 建议
       int *p2 = 0;
       int *p3 = NULL; // (预处理变量（preprocessor variable）)
       ```
-  
+
     * void\* 指针 
       不能直接操作，因为我们不知道是什么类型
-  
+
     * 指向指针的引用：（不能定义指向引用的指针，因为引用不是对象）
       ```
       int i  = 42;
@@ -92,30 +92,148 @@
       
       r = &i;  // r引用了一个指针，因此给r赋值给&i, 就是令p指向i
       ```
-  
+
   ### 2.4 const限定符
-  
-  * const对象必须初始化
-  
-  * 多文件使用同一个const？
-    每个文件都用  `extern const int bufSize`  // 例子,都加extern
-  
-  * **const的引用**
-    (reference to const)
-  
-    ```
+
+* const对象必须初始化
+
+* 多文件使用同一个const？
+  每个文件都用  `extern const int bufSize`  // 例子,都加extern
+
+* **const的引用**
+  (reference to const)
+
+  * ```
     const int ci = 1024;
     const int &r1 = ci; 	// 引用及其对应的对象都是常量
     r1 = 42; 	// 错误
     int &r2 = ci;	// 错误。让一个非常量引用指向一个常量对象
     ```
-  
-    ```
+
+  * ```
     int i = 42;
+    const int &r2 = 42;	// 正确，常量引用（甚至可以绑定任意表达式作为初始值，或者字面值）
     const int &r1 = i; 	// 正确，常量引用
     const int &r3 = r1*2;	// 正确，常量引用
     int &r4 = r1 * 2;	// 错误，r4是一个普通的非常量引用
     ```
-  
-    
+
+    为什么r4是错误引用？
+    例子：
+
+    ```
+    double dval = 3.14;
+    const int &ri = dval;
+    --> 编译器具体操作，会产生一个temp变量
+    const int temp = dval;
+    const int &ri = temp;
+    所以ri不是引用dval,而是引用了一个隐藏的temp，这显然不好
+    ```
+
+  * 对const的引用可能引用一个并非const的对象
+    ```
+    int i = 42;
+    const int &ri = i; 
+    // 这表明不能通过ri，来修改i的值。
+    ```
+
+  * 常量引用！
+    ```
+    const int &r = 0;
+    // 合法。因为是常量引用，所以可以绑定在常量上。
+    ```
+
+  * 非法的情形：不能让引用恒定不变
+    例子:`const int &const r2`:
+    非法，引用不是对象，所以不能让引用恒定不变！
+
+  * 指针和const
+    ```
+    const double pi = 3.14;		// 定义一个const常量
+    double *ptr = &pi;			// 错误，因为ptr是普通指针，不能指向常量
+    const double *cptr = &pi;	// 正确，cptr可以指向一个常量
+    *cptr = 42;					// 错误，不能给常量赋值
+    ```
+
+    * 指针类型与所指对象不一致的例外：
+
+      1. **允许一个指向常量的指针，指向一个非常量对象**
+
+         ```
+         double dval = 3.14;
+         cptr = &dval;	// 正确，但是不能通过cptr改变dval的值
+         ```
+
+         （指向常量的指针，**仅仅要求不能通过该指针改变对象的值**！）
+         （指向常量的引用也是一样！）
+
+      2. 常量指针 const pointer
+         必须初始化
+         表示不变的是指针的值，而不是指向的那个值（指向不变！）
+
+         ```\
+         int errNumb = 0;
+         int *const curErr = &errNumb;	// *号放在const之前，说明指针是一个常量
+         const double pi = 3.14
+         const double *const pip = &pi;	// pip是指向常量对象的常量指针
+         ```
+
+         * 如何辨别？
+           从右往左阅读！
+           例子:
+
+           ```
+           const int *const curErr = &errNumb;
+           离curErr最近的是const，所以curErr是一个常量对象！
+           然后对象是类型，由声明符的其余部分决定
+           声明符下一个是*，意思是curErr是一个常量指针，
+           最后const int表示常量指针指向的是一个int常量对象。
+           ```
+
+           指针是常量，并不意味着不能通过指针修改指向的值，而是要看指向的对象的类型！
+
+         * 非法例子：
+           ```
+           int *p1;
+           const int *const p3;
+           p1 = p3;
+           // 非法，p1可以修改其指向的值，但是p3不能被修改！语法上错误！
+           ```
+
+           
+
+* 顶层(top-level) const / 底层(low-level) const
+
+  * 顶层const：表示指针本身是常量 （不允许改变对象的值）
+
+  * 底层const：表示指针所指对象是const （允许改变对象的值）
+    用于声明引用的const都是底层const
+
+  * 拷贝上的区别：
+
+    * 拷贝操作对顶层const无影响
+
+    * 拷贝操作对底层const来说，左右两边必须具有相同的底层const资格
+
+    * 还有例如：
+      ```
+      int i = 0;
+      const int ci = 42;
+      int &r = ci; 			// 错误，普通int不能绑定在一个const int上
+      const int &r2 = i;		// 正确，const int可以绑定在普通int上
+      ```
+
+  * 顶：自己就是常量
+    底：指向的东西是常量
+
+* constexpr和常量表达式
+
+  * 常量表达式：
+    值不会改变且编译过程就能得到计算结果的表达式
+  * constexpr变量
+    * 作用于指针，只表示常量指针（顶层const）
+    * 需要字面值类型 literal type
+    * constexpr指针初始化必须为0或者nullptr
+
+### 2.5 处理类型
 
