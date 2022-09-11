@@ -4,7 +4,7 @@
 
 ## Sec1 Begin
 
-## Sec2 Basic Built-in Type
+## Sec2 变量和基本类型
 
 ### 2.1 基本内置类型
 
@@ -300,10 +300,43 @@
   decltype(*p) c;	// 错误，c是int&类型，所以必须初始化
   ```
 
-  ```
+  ```c++
   // 注意，如果里面是加了括号的变量，结果将是引用
   decltype((i)) d;	// 错误，d为int&,必须初始化
   decltype(i) e;		// 正确
   ```
 
-  
+   
+
+## Sec3 字符串、向量和数组
+
+* using namespace::name
+
+* string:
+
+  * 初始化：
+    ```
+    string s1;
+    string s2(s1);
+    string s2 = s1;
+    string s3("value");
+    string s3 = "value";	// 拷贝初始化 （用了等号 = ）
+    string s4(n,"c");
+    ```
+
+  * 操作
+    ```
+    os<<s
+    is>>s
+    getline(is, s)
+    s.empty()
+    s.size()
+    s[n]
+    s1+s2
+    s1=s2
+    s1==s2
+    s1!=s2
+    <,<=,>=,>
+    ```
+
+    
