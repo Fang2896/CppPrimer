@@ -229,7 +229,7 @@
 * constexpr和常量表达式
 
   * 常量表达式：
-    值不会改变且编译过程就能得到计算结果的表达式
+    值不会改变且**编译过程就能得到计算结果的表达式**
   * constexpr变量
     * 作用于指针，只表示常量指针（顶层const）
     * 需要字面值类型 literal type
@@ -237,3 +237,73 @@
 
 ### 2.5 处理类型
 
+* 类型别名 （type alias）
+  ```c++
+  typedef double wages;
+  typedef wages base, *p;
+  ```
+
+  *  别名声明 （alias declaration）
+
+    ```
+    using SI = Sales_item;
+    ```
+
+  * 注意的点：
+    ```c++
+    typedef char *pstring;	// pstring是指向char的指针
+    const pstring cstr = 0;	// cstr 是指向char的常量指针
+    const pstring *ps;		// ps是指针，指向指向char的指针
+    ```
+
+* auto类型说明符
+  目的：常常会将表达式的值赋给变量，但需要知道表达式的类型，所以引入auto，变量就可以自动转换类型了。
+
+  `auto`可以在一条语句重声明多个变量。因为一条声明语句只能有一个基本数据类型，所以该语句中所有变量的初始基本数据类型都必须一致
+
+  ```c++
+  auto i = 0, *p = &i;	// 正确，类型一致
+  auto sz = 0, pi = 3.14	// 错误
+  ```
+
+  * `auto` 一般会忽略顶层const，保留底层const
+
+    ```c++
+    const int ci = i, &cr = ci;
+    auto b = ci;					// b 是一个整数，ci的顶层const被忽略
+    auto c = cr;					// c 是一个整数, cr是ci的别名，ci是一个顶层const，所以也被忽略
+    auto d = &i;					// d是一个整型指针，整数的地址就是指向整数的指针
+    auto e = &ci;					// e是一个指向整数常量的指针 （对常量对象取地址是一种底层const）
+    ```
+
+    如果希望推断出的auto是一个顶层const，需要明确指出
+    `const auto f = ci;`
+
+    还可以将引用的类型设置为auto
+    ```c++
+    auto &g = ci;		// g是一个整型常量引用
+    auto &h = 42;		// 错误，不能将非常量引用绑定字面值
+    const auto &j = 42;	// 正确，可以将常量引用绑定字面值
+    ```
+
+* decltype类型指示符
+
+  作用是选择并返回操作数的数据类型 （得到类型但不实际计算表达式的值）
+  `decltype(f()) sum = x;  // sum的类型就是函数f的返回类型`	
+
+  若decltype使用的表达式是一个变量，则decltype返回该变量的类型，包括顶层const和引用在内
+  如果表达式是一个解引用，则会得到引用类型
+
+  ```c++
+  int i = 42, *p = &i, &r = i;
+  decltype(r+0) b;	// 正确，结果是int类型
+  decltype(*p) c;	// 错误，c是int&类型，所以必须初始化
+  ```
+
+  ```
+  // 注意，如果里面是加了括号的变量，结果将是引用
+  decltype((i)) d;	// 错误，d为int&,必须初始化
+  decltype(i) e;		// 正确
+  ```
+
+  
