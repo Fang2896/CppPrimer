@@ -310,33 +310,206 @@
 
 ## Sec3 字符串、向量和数组
 
-* using namespace::name
+### 3.1 using
 
-* string:
+using namespace::name
 
-  * 初始化：
+### 3.2 string:
+
+* 初始化：
+  ```
+  string s1;
+  string s2(s1);
+  string s2 = s1;
+  string s3("value");
+  string s3 = "value";	// 拷贝初始化 （用了等号 = ）
+  string s4(n,"c");
+  ```
+
+* 操作
+  ```
+  os<<s
+  is>>s
+  getline(is, s)
+  s.empty()
+  s.size()
+  s[n]
+  s1+s2
+  s1=s2
+  s1==s2
+  s1!=s2
+  <,<=,>=,>
+  ```
+
+
+* cctype头文件
+  ```
+  isalnum(c)
+  isalpha(c)
+  iscntrl(c)
+  isgraph(c)	ispunct(c)
+  islower(c)	tolower(c)
+  isupper(c)	toupper(c)
+  isxdigit(c)
+  ```
+
+* 操作每一个字符
+  ```c++
+  for(declaration : expression){
+  	statement;
+  }
+  ```
+
+  ```c++
+  // 例子：
+  string str("swafasgdsvsaefwqa");
+  for(auto c : str)
+  	cout << c << endl;
+  ```
+
+### 3.3 Vector
+
+ `vector<int> ivec;|`
+vector是模板，并非类型！
+
+* 初始化：
+
+  1. 列表初始化
+     只能用花括号
+  2. 拷贝初始化
+
+  3. 创建指定数量的元素
+  4. 值初始化
+     仅指定元素数量
+     但接下来只能用直接初始化，而且有的类一定要初始化指定值！
+
+  ```c++
+  // 区别
+  vector<int> v1(10);
+  vector<int> v2{10};
+  vector<int> v3(10,1);
+  vector<int> v4{10,1};
+  // 注意要是不同类型
+  vector<string> v5{"hi"};	// 列表初始化
+  vector<string> v6("hi");	// 错误，不能用字符串字面值构建vector对象
+  vector<string> v7{10};
+  vector<string> v8{10, "hi"};
+  ```
+
+* 基本操作
+  ```c++
+  v.empty()
+  v.size()
+  v.push_back(t)
+  v[n]
+  ```
+
+* ```
+  vector<int>::size_type // 正确
+  vector::size_type; // 错误
+  ```
+
+* 不能用下标形式添加元素
+
+### 3.4 迭代器
+
+* ```
+  v.begin()
+  v.end()			// 尾后迭代器,off the end. 指向容器的一个本不存在的尾后
+  若容器为空，则v.begin() == v.end()
+  ```
+
+* 迭代运算符
+  ```c++
+  *iter
+  iter->mem
+  ++iter
+  --iter
+  iter1 == iter2
+  iter1 != iter2
+  ```
+
+* 使用：
+  ```c++
+  string s("awefdwafefga");
+  if(s.begin() != s.end())	// 若容器非空
+  {
+      auto iter = s.begin();	// 定义迭代器变量
+      *iter = touppper(*iter);// 解引用来直接访问
+  }
+  ```
+
+  ```c++
+  // 将第一个单词转换为大写
+  for(auto iter = s.begin(); iter != s.end() && !isspace(*iter); ++iter){
+      *iter = toupper(*iter);
+  }
+  ```
+
+* 迭代器类型
+
+  const_iterator: 只读不写
+  iterator
+  如果vector对象或者string对象是一个常量，则只能使用const_iterator
+
+  ```c++
+  vector<int> v;
+  const vector<int> cv;
+  auto it1 = v.begin()	// it1的类型是vector<int>::iterator
+  auto it2 = cv.begin()	// it2的类型是vector<int>::const_iterator
+  ```
+
+* 迭代器的解引用
+  ```
+  // 注意：
+  (*iter).mem 和 *iter.mem结果不同。点运算符的优先级是比解引用运算符更高的
+  (*it).empty();	// 解引用，访问empty成员
+  *it.empty();	// 错误，it是个迭代器，没有empty成员
+  
+  简化：
+  (*it).mem 等价于 it->mem
+  ```
+
+* **某些对vector对象的操作会使迭代器失效**
+  * 不能在范围for循环中向vector对象添加元素
+  * 任何一种可能改变vector对象容量的操作，比如push_back，都会使该vector对象的迭代器失效。
+    （凡是使用了迭代器的循环体，都不要往迭代器所属的容器添加元素）
+
+* 迭代器运算
+  ```
+  iter+n
+  iter-n
+  iter1 += n
+  iter1 -= n
+  iter1 - iter2	// 迭代器相互之间的距离
+  ```
+
+  * 例子，得到迭代器中间的元素
     ```
-    string s1;
-    string s2(s1);
-    string s2 = s1;
-    string s3("value");
-    string s3 = "value";	// 拷贝初始化 （用了等号 = ）
-    string s4(n,"c");
+    auto mid = vi.begin() + vi.size() / 2
     ```
 
-  * 操作
-    ```
-    os<<s
-    is>>s
-    getline(is, s)
-    s.empty()
-    s.size()
-    s[n]
-    s1+s2
-    s1=s2
-    s1==s2
-    s1!=s2
-    <,<=,>=,>
+    距离的类型：`difference_type`的带符号型整数
+
+  * 例子2：二分搜索：
+    ```c++
+    // Binary search
+    // text 必须是有序的
+    // beg和end表示我们搜索的范围
+    auto beg = text.begin(), end = text.end();
+    auto mid = beg + (beg-end)/2;
+    while(mid!=end && *mid!=sought){
+        if(sought < *mid)
+        	end = mid
+        else
+            beg = mid + 1
+    	mid = beg + (end-beg)/2   
+    }
     ```
 
     
+
+
+
+
+
