@@ -5,8 +5,8 @@ using namespace std;
 int main()
 {
     const int i = 42;               
-    auto j = i;                 // j æ˜¯æ•´æ•°
-    const auto &k = i;          // kæ˜¯æ•´å‹å¸¸é‡å¼•ç”¨
-    auto *p = &i;               // pæ˜¯æŒ‡å‘æ•´å‹å¸¸é‡çš„æŒ‡é’ˆ
-    const auto j2 = i, &k2 = i; // j2æ˜¯æ•´å‹å¸¸é‡ï¼Œk2æ˜¯æ•´å‹å¸¸é‡å¼•ç”¨
+    auto j = i;                 // j ÊÇÕûÊı
+    const auto &k = i;          // kÊÇÕûĞÍ³£Á¿ÒıÓÃ
+    auto *p = &i;               // pÊÇÖ¸ÏòÕûĞÍ³£Á¿µÄÖ¸Õë
+    const auto j2 = i, &k2 = i; // j2ÊÇÕûĞÍ³£Á¿£¬k2ÊÇÕûĞÍ³£Á¿ÒıÓÃ
 }
