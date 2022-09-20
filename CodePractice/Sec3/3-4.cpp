@@ -1,5 +1,5 @@
-// ��ÿ���ַ�ת��Ϊ��д��ĸ
-// ��forѭ������ÿһ���ַ�
+// 将每个字符转化为大写字母
+// 用for循环处理每一个字符
 
 #include<iostream>
 #include<string>

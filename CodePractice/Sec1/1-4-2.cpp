@@ -3,7 +3,7 @@ using namespace std;
 
 int main() {
 	int value = 0, sum = 0;
-	cout << "ÊäÈëÊý¾Ý£º";
+	cout << "è¾“å…¥æ•°æ®ï¼š";
 	while (cin >> value) {
 		sum += value;
 	}

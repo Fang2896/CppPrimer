@@ -1,4 +1,4 @@
-// ×÷ÒµÌâ3.24
+// ä½œä¸šé¢˜3.24
 #include<iostream>
 #include<string>
 #include<vector>
@@ -8,20 +8,20 @@ using namespace std;
 int main(){
     vector<int> vInt;
     int iVal;
-    cout << "ÊäÈëÒ»×éÊý×Ö£º " << endl;
+    cout << "è¾“å…¥ä¸€ç»„æ•°å­—ï¼š " << endl;
     while(cin >> iVal)
         vInt.push_back(iVal);
     if(vInt.cbegin() == vInt.cend()){
-        cout << "ÎÞÈÎºÎÔªËØ£¡" << endl;
+        cout << "æ— ä»»ä½•å…ƒç´ ï¼" << endl;
         return -1;
     }
-    cout << "ÏàÁÚÁ½ÏîµÄºÍÒÀ¾ÉÊÇ£º " << endl;
+    cout << "ç›¸é‚»ä¸¤é¡¹çš„å’Œä¾æ—§æ˜¯ï¼š " << endl;
     for(auto it=vInt.cbegin(); it != vInt.cend()-1; it++){
-        cout << (*it + *(++it)) << " ";             // ÕâÀïÓÐÒ»¸ö×Ô¼Ó²Ù×÷
+        cout << (*it + *(++it)) << " ";             // è¿™é‡Œæœ‰ä¸€ä¸ªè‡ªåŠ æ“ä½œ
         if(it - vInt.cbegin() + 1 % 10 == 0)
-            cout << endl;                           // ¿ØÖÆÒ»ÐÐÊäÈë5¸öÊý×Ö
+            cout << endl;                           // æŽ§åˆ¶ä¸€è¡Œè¾“å…¥5ä¸ªæ•°å­—
     }
-    // ÈôÔªËØ¸öÊýÎªÆæÊý£¬Ö±½ÓÊä³ö×îºóÒ»¸öÔªËØ
+    // è‹¥å…ƒç´ ä¸ªæ•°ä¸ºå¥‡æ•°ï¼Œç›´æŽ¥è¾“å‡ºæœ€åŽä¸€ä¸ªå…ƒç´ 
     if(vInt.size() % 2 != 0)
         cout << *(vInt.cend() - 1);
     return 0;

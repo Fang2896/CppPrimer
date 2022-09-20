@@ -23,5 +23,5 @@ int main()
     return 0;
 }
 
-// 解决git乱码问题
-// 解决commit乱码问题
+// 瑙ｅ喅git涔辩爜闂
+// 瑙ｅ喅commit涔辩爜闂

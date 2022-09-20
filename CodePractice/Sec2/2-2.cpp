@@ -1,4 +1,3 @@
-// ×÷ÓÃÓòµÄÇ¶Ì×
 #include<iostream>
 
 int reused = 42;

@@ -1,4 +1,4 @@
-// for循环处理部分字符
+// for寰幆澶勭悊閮ㄥ垎瀛楃
 
 #include<iostream>
 #include<string>

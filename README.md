@@ -1,2 +1,2 @@
 # CppPrimerLearning
-仅供个人进行C++Primer学习
+浠呬緵涓汉杩涜C++Primer瀛︿範

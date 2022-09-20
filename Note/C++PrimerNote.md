@@ -1,314 +1,314 @@
 # C++ Primer Note
 
-*¿ªÊ¼Ê±¼ä: 9ÔÂ4ºÅ*
+*å¼€å§‹æ—¶é—´: 9æœˆ4å·*
 
 ## Sec1 Begin
 
-## Sec2 ±äÁ¿ºÍ»ù±¾ÀàÐÍ
+## Sec2 å˜é‡å’ŒåŸºæœ¬ç±»åž‹
 
-### 2.1 »ù±¾ÄÚÖÃÀàÐÍ
+### 2.1 åŸºæœ¬å†…ç½®ç±»åž‹
 
-* ·ûºÅÊý:
-    * ÎÞ·ûºÅÊýºÍ¸ºÊýÏà¼Ó¡£»áÏÈ½«¸ºÊý×ª»¯ÎªÎÞ·ûºÅÊýÔÙ½øÐÐÏà¼Ó
-    * ÎÞ·ûºÅÊýÏà¼õ£¬ÎÞÂÛÈçºÎ¶¼²»¿ÉÄÜÎª¸ºÊý£¬Èô½á¹ûÎª¸ºÊý£¬Ôò»áÖ±½Ó°´ÕÕ±ÈÌØÎ»À´¶ÁÈ¡ÎÞ·ûºÅÊý
-    * »ìÓÃÎÞ·ûºÅºÍÓÐ·ûºÅÐÍ£¬±ÈÈçÏà³Ë£¬µÃ¿´»úÆ÷ÉÏintËùÕ¼Î»Êý¶ø¶¨
-* ×ªÒåÐòÁÐ£¨escape sequence£© 
-    * \\ ºóÃæ¸ú3¸ö×Ö·û¡£¶¼ÊÇ×ªÒåµÄÄÚÈÝ 
-        * Àý×Ó£º\\1234£¬±íÊ¾×ªÒå×Ö·û\\123ºÍ×Ö·û4
-* 0¿ªÍ·µÄÊýÎª8½øÖÆÊý¡£ÒÔ0X¿ªÍ·µÄÎª16½øÖÆÊý
-* ±íÊ¾¸¡µãÊý£º
-    * ·´Àý£º`1024f`¡£ÕýÈ·Ó¦¸ÃÎª`1024.f`
+* ç¬¦å·æ•°:
+    * æ— ç¬¦å·æ•°å’Œè´Ÿæ•°ç›¸åŠ ã€‚ä¼šå…ˆå°†è´Ÿæ•°è½¬åŒ–ä¸ºæ— ç¬¦å·æ•°å†è¿›è¡Œç›¸åŠ 
+    * æ— ç¬¦å·æ•°ç›¸å‡ï¼Œæ— è®ºå¦‚ä½•éƒ½ä¸å¯èƒ½ä¸ºè´Ÿæ•°ï¼Œè‹¥ç»“æžœä¸ºè´Ÿæ•°ï¼Œåˆ™ä¼šç›´æŽ¥æŒ‰ç…§æ¯”ç‰¹ä½æ¥è¯»å–æ— ç¬¦å·æ•°
+    * æ··ç”¨æ— ç¬¦å·å’Œæœ‰ç¬¦å·åž‹ï¼Œæ¯”å¦‚ç›¸ä¹˜ï¼Œå¾—çœ‹æœºå™¨ä¸Šintæ‰€å ä½æ•°è€Œå®š
+* è½¬ä¹‰åºåˆ—ï¼ˆescape sequenceï¼‰ 
+    * \\ åŽé¢è·Ÿ3ä¸ªå­—ç¬¦ã€‚éƒ½æ˜¯è½¬ä¹‰çš„å†…å®¹ 
+        * ä¾‹å­ï¼š\\1234ï¼Œè¡¨ç¤ºè½¬ä¹‰å­—ç¬¦\\123å’Œå­—ç¬¦4
+* 0å¼€å¤´çš„æ•°ä¸º8è¿›åˆ¶æ•°ã€‚ä»¥0Xå¼€å¤´çš„ä¸º16è¿›åˆ¶æ•°
+* è¡¨ç¤ºæµ®ç‚¹æ•°ï¼š
+    * åä¾‹ï¼š`1024f`ã€‚æ­£ç¡®åº”è¯¥ä¸º`1024.f`
 
-### 2.2 ±äÁ¿
+### 2.2 å˜é‡
 
-* ³õÊ¼»¯
+* åˆå§‹åŒ–
 
-  * ÁÐ±í³õÊ¼»¯
+  * åˆ—è¡¨åˆå§‹åŒ–
 
     ```
     long double ld = 3.14159   
-    int a{ld}, b = {ld};	// ±¨´í£¬´æÔÚ¶ªÊ§ÐÅÏ¢·çÏÕ
-    int a(ld), b = ld;    	// ÕýÈ·£¬µ«¶ªÊ§²¿·ÖÖµ
+    int a{ld}, b = {ld};	// æŠ¥é”™ï¼Œå­˜åœ¨ä¸¢å¤±ä¿¡æ¯é£Žé™©
+    int a(ld), b = ld;    	// æ­£ç¡®ï¼Œä½†ä¸¢å¤±éƒ¨åˆ†å€¼
     ```
 
-  * Ä¬ÈÏ³õÊ¼»¯
-    Ã»ÓÐÖ¸¶¨³õÖµ£¬Ä¬ÈÏ³õÊ¼»¯
+  * é»˜è®¤åˆå§‹åŒ–
+    æ²¡æœ‰æŒ‡å®šåˆå€¼ï¼Œé»˜è®¤åˆå§‹åŒ–
 
-    * ¶¨ÒåÓÚÈÎºÎº¯ÊýÖ®ÍâµÄ±äÁ¿±»³õÊ¼»¯Îª0
-    * ¶¨ÒåÔÚº¯ÊýÌåÄÚ²¿µÄÄÚÖÃÀàÐÍ±äÁ¿½«²»±»³õÊ¼»¯ uninitialized
-    * Ã¿¸öÀà¸÷×Ô¾ö¶¨³õÊ¼»¯¶ÔÏóµÄ·½Ê½
-      ÊÇ·ñ²»¾­¹ý³õÊ¼»¯¾Í¶¨Òå¶ÔÏóÒ²ÓÉÀà×Ô¼º¾ö¶¨
-    * ½¨Òé³õÊ¼»¯Ã¿Ò»¸öÄÚÖÃÀàÐÍµÄ±äÁ¿
+    * å®šä¹‰äºŽä»»ä½•å‡½æ•°ä¹‹å¤–çš„å˜é‡è¢«åˆå§‹åŒ–ä¸º0
+    * å®šä¹‰åœ¨å‡½æ•°ä½“å†…éƒ¨çš„å†…ç½®ç±»åž‹å˜é‡å°†ä¸è¢«åˆå§‹åŒ– uninitialized
+    * æ¯ä¸ªç±»å„è‡ªå†³å®šåˆå§‹åŒ–å¯¹è±¡çš„æ–¹å¼
+      æ˜¯å¦ä¸ç»è¿‡åˆå§‹åŒ–å°±å®šä¹‰å¯¹è±¡ä¹Ÿç”±ç±»è‡ªå·±å†³å®š
+    * å»ºè®®åˆå§‹åŒ–æ¯ä¸€ä¸ªå†…ç½®ç±»åž‹çš„å˜é‡
 
-  * ÉùÃ÷ºÍ¶¨Òå£º
-    ±äÁ¿ÉùÃ÷¹æ¶¨ÁË±äÁ¿µÄÀàÐÍºÍÃû×Ö£¬¶¨ÒåÒ²Ò»Ñù£¬²»Í¬µãÔÚÓÚ£¬¶¨Òå»¹ÉêÇë´æ´¢¿Õ¼ä£¬Ò²¿ÉÄÜ»á¸ø±äÁ¿¸³Ò»¸ö³õÊ¼Öµ
-    ÈÎºÎ°üº¬ÏÔÊ¾³õÊ¼»¯µÄÉùÃ÷£¬¼´³ÉÎª¶¨Òå
+  * å£°æ˜Žå’Œå®šä¹‰ï¼š
+    å˜é‡å£°æ˜Žè§„å®šäº†å˜é‡çš„ç±»åž‹å’Œåå­—ï¼Œå®šä¹‰ä¹Ÿä¸€æ ·ï¼Œä¸åŒç‚¹åœ¨äºŽï¼Œå®šä¹‰è¿˜ç”³è¯·å­˜å‚¨ç©ºé—´ï¼Œä¹Ÿå¯èƒ½ä¼šç»™å˜é‡èµ‹ä¸€ä¸ªåˆå§‹å€¼
+    ä»»ä½•åŒ…å«æ˜¾ç¤ºåˆå§‹åŒ–çš„å£°æ˜Žï¼Œå³æˆä¸ºå®šä¹‰
 
     ```
-    extern int i;	// ÉùÃ÷i£¬²¢·Ç¶¨Òåi
-    int j;			// ÉùÃ÷²¢¶¨Òåj
-    extern double pi = 3.14 // ¶¨Òå
+    extern int i;	// å£°æ˜Žiï¼Œå¹¶éžå®šä¹‰i
+    int j;			// å£°æ˜Žå¹¶å®šä¹‰j
+    extern double pi = 3.14 // å®šä¹‰
     ```
 
-    º¯ÊýÄÚ²¿£¬Èç¹ûÊÔÍ¼³õÊ¼»¯Ò»¸öÓÉextern¹Ø¼ü×Ö±ê¼ÇµÄ±äÁ¿»áÒý·¢´íÎó
-    ±äÁ¿ÄÜÇÒÖ»ÄÜ±»¶¨ÒåÒ»´Î£¬µ«¿ÉÒÔ±»¶à´ÎÉùÃ÷
+    å‡½æ•°å†…éƒ¨ï¼Œå¦‚æžœè¯•å›¾åˆå§‹åŒ–ä¸€ä¸ªç”±externå…³é”®å­—æ ‡è®°çš„å˜é‡ä¼šå¼•å‘é”™è¯¯
+    å˜é‡èƒ½ä¸”åªèƒ½è¢«å®šä¹‰ä¸€æ¬¡ï¼Œä½†å¯ä»¥è¢«å¤šæ¬¡å£°æ˜Ž
 
-  * ×÷ÓÃÓò
+  * ä½œç”¨åŸŸ
     scope
 
-  ### 2.3 ¸´ºÏÀàÐÍ (Compound Type)
+  ### 2.3 å¤åˆç±»åž‹ (Compound Type)
 
-  * ÒýÓÃ£ºreference
+  * å¼•ç”¨ï¼šreference
 
     * lvalue reference
-      Ò»°ãÖ¸£º×óÖµÒýÓÃ \&
+      ä¸€èˆ¬æŒ‡ï¼šå·¦å€¼å¼•ç”¨ \&
 
-      Ò»¶¨Òª³õÊ¼»¯£¡¶¨ÒåÒýÓÃÊ±£¬³ÌÐò°ÑÒýÓÃÓëËûµÄ³õÊ¼Öµbind°ó¶¨ÔÚÒ»Æð£¬¶ø²»ÊÇ½«³õÊ¼Öµ¿½±´¸øÒýÓÃ¡£
-      Ò»µ©³õÊ¼»¯Íê³É£¬ÒýÓÃ½«ºÍËüµÄ³õÊ¼Öµ¶ÔÏóÒ»Ö±°ó¶¨ÔÚÒ»Æð¡£ÒòÎªÎÞ·¨ÁîÒýÓÃÖØÐÂ°ó¶¨ÁíÍâÒ»¸ö¶ÔÏó£¬Òò´ËÒýÓÃ±ØÐë³õÊ¼»¯¡£
-      £¨ÒýÓÃÖ»ÊÇÎªÒ»¸öÒÑ¾­´æÔÚµÄ±äÁ¿ÆðÒ»¸ö±ðÃû£©
+      ä¸€å®šè¦åˆå§‹åŒ–ï¼å®šä¹‰å¼•ç”¨æ—¶ï¼Œç¨‹åºæŠŠå¼•ç”¨ä¸Žä»–çš„åˆå§‹å€¼bindç»‘å®šåœ¨ä¸€èµ·ï¼Œè€Œä¸æ˜¯å°†åˆå§‹å€¼æ‹·è´ç»™å¼•ç”¨ã€‚
+      ä¸€æ—¦åˆå§‹åŒ–å®Œæˆï¼Œå¼•ç”¨å°†å’Œå®ƒçš„åˆå§‹å€¼å¯¹è±¡ä¸€ç›´ç»‘å®šåœ¨ä¸€èµ·ã€‚å› ä¸ºæ— æ³•ä»¤å¼•ç”¨é‡æ–°ç»‘å®šå¦å¤–ä¸€ä¸ªå¯¹è±¡ï¼Œå› æ­¤å¼•ç”¨å¿…é¡»åˆå§‹åŒ–ã€‚
+      ï¼ˆå¼•ç”¨åªæ˜¯ä¸ºä¸€ä¸ªå·²ç»å­˜åœ¨çš„å˜é‡èµ·ä¸€ä¸ªåˆ«åï¼‰
 
-  * Ö¸Õë pointer
+  * æŒ‡é’ˆ pointer
 
-    \&£ºÈ¡µØÖ··û
-    \*£º½âÒýÓÃ·û
+    \&ï¼šå–åœ°å€ç¬¦
+    \*ï¼šè§£å¼•ç”¨ç¬¦
 
-    * ¿ÕÖ¸Õë£º
-      nullptr¿ÉÒÔ×ª»¯ÎªÈÎÒâÆäËûµÄÖ¸ÕëÀàÐÍ
+    * ç©ºæŒ‡é’ˆï¼š
+      nullptrå¯ä»¥è½¬åŒ–ä¸ºä»»æ„å…¶ä»–çš„æŒ‡é’ˆç±»åž‹
 
       ```
-      int *p1 = nullptr; // ½¨Òé
+      int *p1 = nullptr; // å»ºè®®
       int *p2 = 0;
-      int *p3 = NULL; // (Ô¤´¦Àí±äÁ¿£¨preprocessor variable£©)
+      int *p3 = NULL; // (é¢„å¤„ç†å˜é‡ï¼ˆpreprocessor variableï¼‰)
       ```
 
-    * void\* Ö¸Õë 
-      ²»ÄÜÖ±½Ó²Ù×÷£¬ÒòÎªÎÒÃÇ²»ÖªµÀÊÇÊ²Ã´ÀàÐÍ
+    * void\* æŒ‡é’ˆ 
+      ä¸èƒ½ç›´æŽ¥æ“ä½œï¼Œå› ä¸ºæˆ‘ä»¬ä¸çŸ¥é“æ˜¯ä»€ä¹ˆç±»åž‹
 
-    * Ö¸ÏòÖ¸ÕëµÄÒýÓÃ£º£¨²»ÄÜ¶¨ÒåÖ¸ÏòÒýÓÃµÄÖ¸Õë£¬ÒòÎªÒýÓÃ²»ÊÇ¶ÔÏó£©
+    * æŒ‡å‘æŒ‡é’ˆçš„å¼•ç”¨ï¼šï¼ˆä¸èƒ½å®šä¹‰æŒ‡å‘å¼•ç”¨çš„æŒ‡é’ˆï¼Œå› ä¸ºå¼•ç”¨ä¸æ˜¯å¯¹è±¡ï¼‰
       ```
       int i  = 42;
       int *p;
-      int *&r = p; // rÊÇÒ»¸ö¶ÔÖ¸ÕëpµÄÒýÓÃ£¬´ÓÓÒÍù×ó¿´
+      int *&r = p; // ræ˜¯ä¸€ä¸ªå¯¹æŒ‡é’ˆpçš„å¼•ç”¨ï¼Œä»Žå³å¾€å·¦çœ‹
       
-      r = &i;  // rÒýÓÃÁËÒ»¸öÖ¸Õë£¬Òò´Ë¸ør¸³Öµ¸ø&i, ¾ÍÊÇÁîpÖ¸Ïòi
+      r = &i;  // rå¼•ç”¨äº†ä¸€ä¸ªæŒ‡é’ˆï¼Œå› æ­¤ç»™rèµ‹å€¼ç»™&i, å°±æ˜¯ä»¤pæŒ‡å‘i
       ```
 
-  ### 2.4 constÏÞ¶¨·û
+  ### 2.4 consté™å®šç¬¦
 
-* const¶ÔÏó±ØÐë³õÊ¼»¯
+* constå¯¹è±¡å¿…é¡»åˆå§‹åŒ–
 
-* ¶àÎÄ¼þÊ¹ÓÃÍ¬Ò»¸öconst£¿
-  Ã¿¸öÎÄ¼þ¶¼ÓÃ  `extern const int bufSize`  // Àý×Ó,¶¼¼Óextern
+* å¤šæ–‡ä»¶ä½¿ç”¨åŒä¸€ä¸ªconstï¼Ÿ
+  æ¯ä¸ªæ–‡ä»¶éƒ½ç”¨  `extern const int bufSize`  // ä¾‹å­,éƒ½åŠ extern
 
-* **constµÄÒýÓÃ**
+* **constçš„å¼•ç”¨**
   (reference to const)
 
   * ```
     const int ci = 1024;
-    const int &r1 = ci; 	// ÒýÓÃ¼°Æä¶ÔÓ¦µÄ¶ÔÏó¶¼ÊÇ³£Á¿
-    r1 = 42; 	// ´íÎó
-    int &r2 = ci;	// ´íÎó¡£ÈÃÒ»¸ö·Ç³£Á¿ÒýÓÃÖ¸ÏòÒ»¸ö³£Á¿¶ÔÏó
+    const int &r1 = ci; 	// å¼•ç”¨åŠå…¶å¯¹åº”çš„å¯¹è±¡éƒ½æ˜¯å¸¸é‡
+    r1 = 42; 	// é”™è¯¯
+    int &r2 = ci;	// é”™è¯¯ã€‚è®©ä¸€ä¸ªéžå¸¸é‡å¼•ç”¨æŒ‡å‘ä¸€ä¸ªå¸¸é‡å¯¹è±¡
     ```
 
   * ```
     int i = 42;
-    const int &r2 = 42;	// ÕýÈ·£¬³£Á¿ÒýÓÃ£¨ÉõÖÁ¿ÉÒÔ°ó¶¨ÈÎÒâ±í´ïÊ½×÷Îª³õÊ¼Öµ£¬»òÕß×ÖÃæÖµ£©
-    const int &r1 = i; 	// ÕýÈ·£¬³£Á¿ÒýÓÃ
-    const int &r3 = r1*2;	// ÕýÈ·£¬³£Á¿ÒýÓÃ
-    int &r4 = r1 * 2;	// ´íÎó£¬r4ÊÇÒ»¸öÆÕÍ¨µÄ·Ç³£Á¿ÒýÓÃ
+    const int &r2 = 42;	// æ­£ç¡®ï¼Œå¸¸é‡å¼•ç”¨ï¼ˆç”šè‡³å¯ä»¥ç»‘å®šä»»æ„è¡¨è¾¾å¼ä½œä¸ºåˆå§‹å€¼ï¼Œæˆ–è€…å­—é¢å€¼ï¼‰
+    const int &r1 = i; 	// æ­£ç¡®ï¼Œå¸¸é‡å¼•ç”¨
+    const int &r3 = r1*2;	// æ­£ç¡®ï¼Œå¸¸é‡å¼•ç”¨
+    int &r4 = r1 * 2;	// é”™è¯¯ï¼Œr4æ˜¯ä¸€ä¸ªæ™®é€šçš„éžå¸¸é‡å¼•ç”¨
     ```
 
-    ÎªÊ²Ã´r4ÊÇ´íÎóÒýÓÃ£¿
-    Àý×Ó£º
+    ä¸ºä»€ä¹ˆr4æ˜¯é”™è¯¯å¼•ç”¨ï¼Ÿ
+    ä¾‹å­ï¼š
 
     ```
     double dval = 3.14;
     const int &ri = dval;
-    --> ±àÒëÆ÷¾ßÌå²Ù×÷£¬»á²úÉúÒ»¸ötemp±äÁ¿
+    --> ç¼–è¯‘å™¨å…·ä½“æ“ä½œï¼Œä¼šäº§ç”Ÿä¸€ä¸ªtempå˜é‡
     const int temp = dval;
     const int &ri = temp;
-    ËùÒÔri²»ÊÇÒýÓÃdval,¶øÊÇÒýÓÃÁËÒ»¸öÒþ²ØµÄtemp£¬ÕâÏÔÈ»²»ºÃ
+    æ‰€ä»¥riä¸æ˜¯å¼•ç”¨dval,è€Œæ˜¯å¼•ç”¨äº†ä¸€ä¸ªéšè—çš„tempï¼Œè¿™æ˜¾ç„¶ä¸å¥½
     ```
 
-  * ¶ÔconstµÄÒýÓÃ¿ÉÄÜÒýÓÃÒ»¸ö²¢·ÇconstµÄ¶ÔÏó
+  * å¯¹constçš„å¼•ç”¨å¯èƒ½å¼•ç”¨ä¸€ä¸ªå¹¶éžconstçš„å¯¹è±¡
     ```
     int i = 42;
     const int &ri = i; 
-    // Õâ±íÃ÷²»ÄÜÍ¨¹ýri£¬À´ÐÞ¸ÄiµÄÖµ¡£
+    // è¿™è¡¨æ˜Žä¸èƒ½é€šè¿‡riï¼Œæ¥ä¿®æ”¹içš„å€¼ã€‚
     ```
 
-  * ³£Á¿ÒýÓÃ£¡
+  * å¸¸é‡å¼•ç”¨ï¼
     ```
     const int &r = 0;
-    // ºÏ·¨¡£ÒòÎªÊÇ³£Á¿ÒýÓÃ£¬ËùÒÔ¿ÉÒÔ°ó¶¨ÔÚ³£Á¿ÉÏ¡£
+    // åˆæ³•ã€‚å› ä¸ºæ˜¯å¸¸é‡å¼•ç”¨ï¼Œæ‰€ä»¥å¯ä»¥ç»‘å®šåœ¨å¸¸é‡ä¸Šã€‚
     ```
 
-  * ·Ç·¨µÄÇéÐÎ£º²»ÄÜÈÃÒýÓÃºã¶¨²»±ä
-    Àý×Ó:`const int &const r2`:
-    ·Ç·¨£¬ÒýÓÃ²»ÊÇ¶ÔÏó£¬ËùÒÔ²»ÄÜÈÃÒýÓÃºã¶¨²»±ä£¡
+  * éžæ³•çš„æƒ…å½¢ï¼šä¸èƒ½è®©å¼•ç”¨æ’å®šä¸å˜
+    ä¾‹å­:`const int &const r2`:
+    éžæ³•ï¼Œå¼•ç”¨ä¸æ˜¯å¯¹è±¡ï¼Œæ‰€ä»¥ä¸èƒ½è®©å¼•ç”¨æ’å®šä¸å˜ï¼
 
-  * Ö¸ÕëºÍconst
+  * æŒ‡é’ˆå’Œconst
     ```
-    const double pi = 3.14;		// ¶¨ÒåÒ»¸öconst³£Á¿
-    double *ptr = &pi;			// ´íÎó£¬ÒòÎªptrÊÇÆÕÍ¨Ö¸Õë£¬²»ÄÜÖ¸Ïò³£Á¿
-    const double *cptr = &pi;	// ÕýÈ·£¬cptr¿ÉÒÔÖ¸ÏòÒ»¸ö³£Á¿
-    *cptr = 42;					// ´íÎó£¬²»ÄÜ¸ø³£Á¿¸³Öµ
+    const double pi = 3.14;		// å®šä¹‰ä¸€ä¸ªconstå¸¸é‡
+    double *ptr = &pi;			// é”™è¯¯ï¼Œå› ä¸ºptræ˜¯æ™®é€šæŒ‡é’ˆï¼Œä¸èƒ½æŒ‡å‘å¸¸é‡
+    const double *cptr = &pi;	// æ­£ç¡®ï¼Œcptrå¯ä»¥æŒ‡å‘ä¸€ä¸ªå¸¸é‡
+    *cptr = 42;					// é”™è¯¯ï¼Œä¸èƒ½ç»™å¸¸é‡èµ‹å€¼
     ```
 
-    * Ö¸ÕëÀàÐÍÓëËùÖ¸¶ÔÏó²»Ò»ÖÂµÄÀýÍâ£º
+    * æŒ‡é’ˆç±»åž‹ä¸Žæ‰€æŒ‡å¯¹è±¡ä¸ä¸€è‡´çš„ä¾‹å¤–ï¼š
 
-      1. **ÔÊÐíÒ»¸öÖ¸Ïò³£Á¿µÄÖ¸Õë£¬Ö¸ÏòÒ»¸ö·Ç³£Á¿¶ÔÏó**
+      1. **å…è®¸ä¸€ä¸ªæŒ‡å‘å¸¸é‡çš„æŒ‡é’ˆï¼ŒæŒ‡å‘ä¸€ä¸ªéžå¸¸é‡å¯¹è±¡**
 
          ```
          double dval = 3.14;
-         cptr = &dval;	// ÕýÈ·£¬µ«ÊÇ²»ÄÜÍ¨¹ýcptr¸Ä±ädvalµÄÖµ
+         cptr = &dval;	// æ­£ç¡®ï¼Œä½†æ˜¯ä¸èƒ½é€šè¿‡cptræ”¹å˜dvalçš„å€¼
          ```
 
-         £¨Ö¸Ïò³£Á¿µÄÖ¸Õë£¬**½ö½öÒªÇó²»ÄÜÍ¨¹ý¸ÃÖ¸Õë¸Ä±ä¶ÔÏóµÄÖµ**£¡£©
-         £¨Ö¸Ïò³£Á¿µÄÒýÓÃÒ²ÊÇÒ»Ñù£¡£©
+         ï¼ˆæŒ‡å‘å¸¸é‡çš„æŒ‡é’ˆï¼Œ**ä»…ä»…è¦æ±‚ä¸èƒ½é€šè¿‡è¯¥æŒ‡é’ˆæ”¹å˜å¯¹è±¡çš„å€¼**ï¼ï¼‰
+         ï¼ˆæŒ‡å‘å¸¸é‡çš„å¼•ç”¨ä¹Ÿæ˜¯ä¸€æ ·ï¼ï¼‰
 
-      2. ³£Á¿Ö¸Õë const pointer
-         ±ØÐë³õÊ¼»¯
-         ±íÊ¾²»±äµÄÊÇÖ¸ÕëµÄÖµ£¬¶ø²»ÊÇÖ¸ÏòµÄÄÇ¸öÖµ£¨Ö¸Ïò²»±ä£¡£©
+      2. å¸¸é‡æŒ‡é’ˆ const pointer
+         å¿…é¡»åˆå§‹åŒ–
+         è¡¨ç¤ºä¸å˜çš„æ˜¯æŒ‡é’ˆçš„å€¼ï¼Œè€Œä¸æ˜¯æŒ‡å‘çš„é‚£ä¸ªå€¼ï¼ˆæŒ‡å‘ä¸å˜ï¼ï¼‰
 
          ```\
          int errNumb = 0;
-         int *const curErr = &errNumb;	// *ºÅ·ÅÔÚconstÖ®Ç°£¬ËµÃ÷Ö¸ÕëÊÇÒ»¸ö³£Á¿
+         int *const curErr = &errNumb;	// *å·æ”¾åœ¨constä¹‹å‰ï¼Œè¯´æ˜ŽæŒ‡é’ˆæ˜¯ä¸€ä¸ªå¸¸é‡
          const double pi = 3.14
-         const double *const pip = &pi;	// pipÊÇÖ¸Ïò³£Á¿¶ÔÏóµÄ³£Á¿Ö¸Õë
+         const double *const pip = &pi;	// pipæ˜¯æŒ‡å‘å¸¸é‡å¯¹è±¡çš„å¸¸é‡æŒ‡é’ˆ
          ```
 
-         * ÈçºÎ±æ±ð£¿
-           ´ÓÓÒÍù×óÔÄ¶Á£¡
-           Àý×Ó:
+         * å¦‚ä½•è¾¨åˆ«ï¼Ÿ
+           ä»Žå³å¾€å·¦é˜…è¯»ï¼
+           ä¾‹å­:
 
            ```
            const int *const curErr = &errNumb;
-           ÀëcurErr×î½üµÄÊÇconst£¬ËùÒÔcurErrÊÇÒ»¸ö³£Á¿¶ÔÏó£¡
-           È»ºó¶ÔÏóÊÇÀàÐÍ£¬ÓÉÉùÃ÷·ûµÄÆäÓà²¿·Ö¾ö¶¨
-           ÉùÃ÷·ûÏÂÒ»¸öÊÇ*£¬ÒâË¼ÊÇcurErrÊÇÒ»¸ö³£Á¿Ö¸Õë£¬
-           ×îºóconst int±íÊ¾³£Á¿Ö¸ÕëÖ¸ÏòµÄÊÇÒ»¸öint³£Á¿¶ÔÏó¡£
+           ç¦»curErræœ€è¿‘çš„æ˜¯constï¼Œæ‰€ä»¥curErræ˜¯ä¸€ä¸ªå¸¸é‡å¯¹è±¡ï¼
+           ç„¶åŽå¯¹è±¡æ˜¯ç±»åž‹ï¼Œç”±å£°æ˜Žç¬¦çš„å…¶ä½™éƒ¨åˆ†å†³å®š
+           å£°æ˜Žç¬¦ä¸‹ä¸€ä¸ªæ˜¯*ï¼Œæ„æ€æ˜¯curErræ˜¯ä¸€ä¸ªå¸¸é‡æŒ‡é’ˆï¼Œ
+           æœ€åŽconst intè¡¨ç¤ºå¸¸é‡æŒ‡é’ˆæŒ‡å‘çš„æ˜¯ä¸€ä¸ªintå¸¸é‡å¯¹è±¡ã€‚
            ```
 
-           Ö¸ÕëÊÇ³£Á¿£¬²¢²»ÒâÎ¶×Å²»ÄÜÍ¨¹ýÖ¸ÕëÐÞ¸ÄÖ¸ÏòµÄÖµ£¬¶øÊÇÒª¿´Ö¸ÏòµÄ¶ÔÏóµÄÀàÐÍ£¡
+           æŒ‡é’ˆæ˜¯å¸¸é‡ï¼Œå¹¶ä¸æ„å‘³ç€ä¸èƒ½é€šè¿‡æŒ‡é’ˆä¿®æ”¹æŒ‡å‘çš„å€¼ï¼Œè€Œæ˜¯è¦çœ‹æŒ‡å‘çš„å¯¹è±¡çš„ç±»åž‹ï¼
 
-         * ·Ç·¨Àý×Ó£º
+         * éžæ³•ä¾‹å­ï¼š
            ```
            int *p1;
            const int *const p3;
            p1 = p3;
-           // ·Ç·¨£¬p1¿ÉÒÔÐÞ¸ÄÆäÖ¸ÏòµÄÖµ£¬µ«ÊÇp3²»ÄÜ±»ÐÞ¸Ä£¡Óï·¨ÉÏ´íÎó£¡
+           // éžæ³•ï¼Œp1å¯ä»¥ä¿®æ”¹å…¶æŒ‡å‘çš„å€¼ï¼Œä½†æ˜¯p3ä¸èƒ½è¢«ä¿®æ”¹ï¼è¯­æ³•ä¸Šé”™è¯¯ï¼
            ```
 
            
 
-* ¶¥²ã(top-level) const / µ×²ã(low-level) const
+* é¡¶å±‚(top-level) const / åº•å±‚(low-level) const
 
-  * ¶¥²ãconst£º±íÊ¾Ö¸Õë±¾ÉíÊÇ³£Á¿ £¨²»ÔÊÐí¸Ä±ä¶ÔÏóµÄÖµ£©
+  * é¡¶å±‚constï¼šè¡¨ç¤ºæŒ‡é’ˆæœ¬èº«æ˜¯å¸¸é‡ ï¼ˆä¸å…è®¸æ”¹å˜å¯¹è±¡çš„å€¼ï¼‰
 
-  * µ×²ãconst£º±íÊ¾Ö¸ÕëËùÖ¸¶ÔÏóÊÇconst £¨ÔÊÐí¸Ä±ä¶ÔÏóµÄÖµ£©
-    ÓÃÓÚÉùÃ÷ÒýÓÃµÄconst¶¼ÊÇµ×²ãconst
+  * åº•å±‚constï¼šè¡¨ç¤ºæŒ‡é’ˆæ‰€æŒ‡å¯¹è±¡æ˜¯const ï¼ˆå…è®¸æ”¹å˜å¯¹è±¡çš„å€¼ï¼‰
+    ç”¨äºŽå£°æ˜Žå¼•ç”¨çš„constéƒ½æ˜¯åº•å±‚const
 
-  * ¿½±´ÉÏµÄÇø±ð£º
+  * æ‹·è´ä¸Šçš„åŒºåˆ«ï¼š
 
-    * ¿½±´²Ù×÷¶Ô¶¥²ãconstÎÞÓ°Ïì
+    * æ‹·è´æ“ä½œå¯¹é¡¶å±‚constæ— å½±å“
 
-    * ¿½±´²Ù×÷¶Ôµ×²ãconstÀ´Ëµ£¬×óÓÒÁ½±ß±ØÐë¾ßÓÐÏàÍ¬µÄµ×²ãconst×Ê¸ñ
+    * æ‹·è´æ“ä½œå¯¹åº•å±‚constæ¥è¯´ï¼Œå·¦å³ä¸¤è¾¹å¿…é¡»å…·æœ‰ç›¸åŒçš„åº•å±‚constèµ„æ ¼
 
-    * »¹ÓÐÀýÈç£º
+    * è¿˜æœ‰ä¾‹å¦‚ï¼š
       ```
       int i = 0;
       const int ci = 42;
-      int &r = ci; 			// ´íÎó£¬ÆÕÍ¨int²»ÄÜ°ó¶¨ÔÚÒ»¸öconst intÉÏ
-      const int &r2 = i;		// ÕýÈ·£¬const int¿ÉÒÔ°ó¶¨ÔÚÆÕÍ¨intÉÏ
+      int &r = ci; 			// é”™è¯¯ï¼Œæ™®é€šintä¸èƒ½ç»‘å®šåœ¨ä¸€ä¸ªconst intä¸Š
+      const int &r2 = i;		// æ­£ç¡®ï¼Œconst intå¯ä»¥ç»‘å®šåœ¨æ™®é€šintä¸Š
       ```
 
-  * ¶¥£º×Ô¼º¾ÍÊÇ³£Á¿
-    µ×£ºÖ¸ÏòµÄ¶«Î÷ÊÇ³£Á¿
+  * é¡¶ï¼šè‡ªå·±å°±æ˜¯å¸¸é‡
+    åº•ï¼šæŒ‡å‘çš„ä¸œè¥¿æ˜¯å¸¸é‡
 
-* constexprºÍ³£Á¿±í´ïÊ½
+* constexprå’Œå¸¸é‡è¡¨è¾¾å¼
 
-  * ³£Á¿±í´ïÊ½£º
-    Öµ²»»á¸Ä±äÇÒ**±àÒë¹ý³Ì¾ÍÄÜµÃµ½¼ÆËã½á¹ûµÄ±í´ïÊ½**
-  * constexpr±äÁ¿
-    * ×÷ÓÃÓÚÖ¸Õë£¬Ö»±íÊ¾³£Á¿Ö¸Õë£¨¶¥²ãconst£©
-    * ÐèÒª×ÖÃæÖµÀàÐÍ literal type
-    * constexprÖ¸Õë³õÊ¼»¯±ØÐëÎª0»òÕßnullptr
+  * å¸¸é‡è¡¨è¾¾å¼ï¼š
+    å€¼ä¸ä¼šæ”¹å˜ä¸”**ç¼–è¯‘è¿‡ç¨‹å°±èƒ½å¾—åˆ°è®¡ç®—ç»“æžœçš„è¡¨è¾¾å¼**
+  * constexprå˜é‡
+    * ä½œç”¨äºŽæŒ‡é’ˆï¼Œåªè¡¨ç¤ºå¸¸é‡æŒ‡é’ˆï¼ˆé¡¶å±‚constï¼‰
+    * éœ€è¦å­—é¢å€¼ç±»åž‹ literal type
+    * constexpræŒ‡é’ˆåˆå§‹åŒ–å¿…é¡»ä¸º0æˆ–è€…nullptr
 
-### 2.5 ´¦ÀíÀàÐÍ
+### 2.5 å¤„ç†ç±»åž‹
 
-* ÀàÐÍ±ðÃû £¨type alias£©
+* ç±»åž‹åˆ«å ï¼ˆtype aliasï¼‰
   ```c++
   typedef double wages;
   typedef wages base, *p;
   ```
 
-  *  ±ðÃûÉùÃ÷ £¨alias declaration£©
+  *  åˆ«åå£°æ˜Ž ï¼ˆalias declarationï¼‰
 
     ```
     using SI = Sales_item;
     ```
 
-  * ×¢ÒâµÄµã£º
+  * æ³¨æ„çš„ç‚¹ï¼š
     ```c++
-    typedef char *pstring;	// pstringÊÇÖ¸ÏòcharµÄÖ¸Õë
-    const pstring cstr = 0;	// cstr ÊÇÖ¸ÏòcharµÄ³£Á¿Ö¸Õë
-    const pstring *ps;		// psÊÇÖ¸Õë£¬Ö¸ÏòÖ¸ÏòcharµÄÖ¸Õë
+    typedef char *pstring;	// pstringæ˜¯æŒ‡å‘charçš„æŒ‡é’ˆ
+    const pstring cstr = 0;	// cstr æ˜¯æŒ‡å‘charçš„å¸¸é‡æŒ‡é’ˆ
+    const pstring *ps;		// psæ˜¯æŒ‡é’ˆï¼ŒæŒ‡å‘æŒ‡å‘charçš„æŒ‡é’ˆ
     ```
 
-* autoÀàÐÍËµÃ÷·û
-  Ä¿µÄ£º³£³£»á½«±í´ïÊ½µÄÖµ¸³¸ø±äÁ¿£¬µ«ÐèÒªÖªµÀ±í´ïÊ½µÄÀàÐÍ£¬ËùÒÔÒýÈëauto£¬±äÁ¿¾Í¿ÉÒÔ×Ô¶¯×ª»»ÀàÐÍÁË¡£
+* autoç±»åž‹è¯´æ˜Žç¬¦
+  ç›®çš„ï¼šå¸¸å¸¸ä¼šå°†è¡¨è¾¾å¼çš„å€¼èµ‹ç»™å˜é‡ï¼Œä½†éœ€è¦çŸ¥é“è¡¨è¾¾å¼çš„ç±»åž‹ï¼Œæ‰€ä»¥å¼•å…¥autoï¼Œå˜é‡å°±å¯ä»¥è‡ªåŠ¨è½¬æ¢ç±»åž‹äº†ã€‚
 
-  `auto`¿ÉÒÔÔÚÒ»ÌõÓï¾äÖØÉùÃ÷¶à¸ö±äÁ¿¡£ÒòÎªÒ»ÌõÉùÃ÷Óï¾äÖ»ÄÜÓÐÒ»¸ö»ù±¾Êý¾ÝÀàÐÍ£¬ËùÒÔ¸ÃÓï¾äÖÐËùÓÐ±äÁ¿µÄ³õÊ¼»ù±¾Êý¾ÝÀàÐÍ¶¼±ØÐëÒ»ÖÂ
+  `auto`å¯ä»¥åœ¨ä¸€æ¡è¯­å¥é‡å£°æ˜Žå¤šä¸ªå˜é‡ã€‚å› ä¸ºä¸€æ¡å£°æ˜Žè¯­å¥åªèƒ½æœ‰ä¸€ä¸ªåŸºæœ¬æ•°æ®ç±»åž‹ï¼Œæ‰€ä»¥è¯¥è¯­å¥ä¸­æ‰€æœ‰å˜é‡çš„åˆå§‹åŸºæœ¬æ•°æ®ç±»åž‹éƒ½å¿…é¡»ä¸€è‡´
 
   ```c++
-  auto i = 0, *p = &i;	// ÕýÈ·£¬ÀàÐÍÒ»ÖÂ
-  auto sz = 0, pi = 3.14	// ´íÎó
+  auto i = 0, *p = &i;	// æ­£ç¡®ï¼Œç±»åž‹ä¸€è‡´
+  auto sz = 0, pi = 3.14	// é”™è¯¯
   ```
 
-  * `auto` Ò»°ã»áºöÂÔ¶¥²ãconst£¬±£Áôµ×²ãconst
+  * `auto` ä¸€èˆ¬ä¼šå¿½ç•¥é¡¶å±‚constï¼Œä¿ç•™åº•å±‚const
 
     ```c++
     const int ci = i, &cr = ci;
-    auto b = ci;					// b ÊÇÒ»¸öÕûÊý£¬ciµÄ¶¥²ãconst±»ºöÂÔ
-    auto c = cr;					// c ÊÇÒ»¸öÕûÊý, crÊÇciµÄ±ðÃû£¬ciÊÇÒ»¸ö¶¥²ãconst£¬ËùÒÔÒ²±»ºöÂÔ
-    auto d = &i;					// dÊÇÒ»¸öÕûÐÍÖ¸Õë£¬ÕûÊýµÄµØÖ·¾ÍÊÇÖ¸ÏòÕûÊýµÄÖ¸Õë
-    auto e = &ci;					// eÊÇÒ»¸öÖ¸ÏòÕûÊý³£Á¿µÄÖ¸Õë £¨¶Ô³£Á¿¶ÔÏóÈ¡µØÖ·ÊÇÒ»ÖÖµ×²ãconst£©
+    auto b = ci;					// b æ˜¯ä¸€ä¸ªæ•´æ•°ï¼Œciçš„é¡¶å±‚constè¢«å¿½ç•¥
+    auto c = cr;					// c æ˜¯ä¸€ä¸ªæ•´æ•°, cræ˜¯ciçš„åˆ«åï¼Œciæ˜¯ä¸€ä¸ªé¡¶å±‚constï¼Œæ‰€ä»¥ä¹Ÿè¢«å¿½ç•¥
+    auto d = &i;					// dæ˜¯ä¸€ä¸ªæ•´åž‹æŒ‡é’ˆï¼Œæ•´æ•°çš„åœ°å€å°±æ˜¯æŒ‡å‘æ•´æ•°çš„æŒ‡é’ˆ
+    auto e = &ci;					// eæ˜¯ä¸€ä¸ªæŒ‡å‘æ•´æ•°å¸¸é‡çš„æŒ‡é’ˆ ï¼ˆå¯¹å¸¸é‡å¯¹è±¡å–åœ°å€æ˜¯ä¸€ç§åº•å±‚constï¼‰
     ```
 
-    Èç¹ûÏ£ÍûÍÆ¶Ï³öµÄautoÊÇÒ»¸ö¶¥²ãconst£¬ÐèÒªÃ÷È·Ö¸³ö
+    å¦‚æžœå¸Œæœ›æŽ¨æ–­å‡ºçš„autoæ˜¯ä¸€ä¸ªé¡¶å±‚constï¼Œéœ€è¦æ˜Žç¡®æŒ‡å‡º
     `const auto f = ci;`
 
-    »¹¿ÉÒÔ½«ÒýÓÃµÄÀàÐÍÉèÖÃÎªauto
+    è¿˜å¯ä»¥å°†å¼•ç”¨çš„ç±»åž‹è®¾ç½®ä¸ºauto
     ```c++
-    auto &g = ci;		// gÊÇÒ»¸öÕûÐÍ³£Á¿ÒýÓÃ
-    auto &h = 42;		// ´íÎó£¬²»ÄÜ½«·Ç³£Á¿ÒýÓÃ°ó¶¨×ÖÃæÖµ
-    const auto &j = 42;	// ÕýÈ·£¬¿ÉÒÔ½«³£Á¿ÒýÓÃ°ó¶¨×ÖÃæÖµ
+    auto &g = ci;		// gæ˜¯ä¸€ä¸ªæ•´åž‹å¸¸é‡å¼•ç”¨
+    auto &h = 42;		// é”™è¯¯ï¼Œä¸èƒ½å°†éžå¸¸é‡å¼•ç”¨ç»‘å®šå­—é¢å€¼
+    const auto &j = 42;	// æ­£ç¡®ï¼Œå¯ä»¥å°†å¸¸é‡å¼•ç”¨ç»‘å®šå­—é¢å€¼
     ```
 
-* decltypeÀàÐÍÖ¸Ê¾·û
+* decltypeç±»åž‹æŒ‡ç¤ºç¬¦
 
-  ×÷ÓÃÊÇÑ¡Ôñ²¢·µ»Ø²Ù×÷ÊýµÄÊý¾ÝÀàÐÍ £¨µÃµ½ÀàÐÍµ«²»Êµ¼Ê¼ÆËã±í´ïÊ½µÄÖµ£©
-  `decltype(f()) sum = x;  // sumµÄÀàÐÍ¾ÍÊÇº¯ÊýfµÄ·µ»ØÀàÐÍ`	
+  ä½œç”¨æ˜¯é€‰æ‹©å¹¶è¿”å›žæ“ä½œæ•°çš„æ•°æ®ç±»åž‹ ï¼ˆå¾—åˆ°ç±»åž‹ä½†ä¸å®žé™…è®¡ç®—è¡¨è¾¾å¼çš„å€¼ï¼‰
+  `decltype(f()) sum = x;  // sumçš„ç±»åž‹å°±æ˜¯å‡½æ•°fçš„è¿”å›žç±»åž‹`	
 
-  ÈôdecltypeÊ¹ÓÃµÄ±í´ïÊ½ÊÇÒ»¸ö±äÁ¿£¬Ôòdecltype·µ»Ø¸Ã±äÁ¿µÄÀàÐÍ£¬°üÀ¨¶¥²ãconstºÍÒýÓÃÔÚÄÚ
-  Èç¹û±í´ïÊ½ÊÇÒ»¸ö½âÒýÓÃ£¬Ôò»áµÃµ½ÒýÓÃÀàÐÍ
+  è‹¥decltypeä½¿ç”¨çš„è¡¨è¾¾å¼æ˜¯ä¸€ä¸ªå˜é‡ï¼Œåˆ™decltypeè¿”å›žè¯¥å˜é‡çš„ç±»åž‹ï¼ŒåŒ…æ‹¬é¡¶å±‚constå’Œå¼•ç”¨åœ¨å†…
+  å¦‚æžœè¡¨è¾¾å¼æ˜¯ä¸€ä¸ªè§£å¼•ç”¨ï¼Œåˆ™ä¼šå¾—åˆ°å¼•ç”¨ç±»åž‹
 
   ```c++
   int i = 42, *p = &i, &r = i;
-  decltype(r+0) b;	// ÕýÈ·£¬½á¹ûÊÇintÀàÐÍ
-  decltype(*p) c;	// ´íÎó£¬cÊÇint&ÀàÐÍ£¬ËùÒÔ±ØÐë³õÊ¼»¯
+  decltype(r+0) b;	// æ­£ç¡®ï¼Œç»“æžœæ˜¯intç±»åž‹
+  decltype(*p) c;	// é”™è¯¯ï¼Œcæ˜¯int&ç±»åž‹ï¼Œæ‰€ä»¥å¿…é¡»åˆå§‹åŒ–
   ```
 
   ```c++
-  // ×¢Òâ£¬Èç¹ûÀïÃæÊÇ¼ÓÁËÀ¨ºÅµÄ±äÁ¿£¬½á¹û½«ÊÇÒýÓÃ
-  decltype((i)) d;	// ´íÎó£¬dÎªint&,±ØÐë³õÊ¼»¯
-  decltype(i) e;		// ÕýÈ·
+  // æ³¨æ„ï¼Œå¦‚æžœé‡Œé¢æ˜¯åŠ äº†æ‹¬å·çš„å˜é‡ï¼Œç»“æžœå°†æ˜¯å¼•ç”¨
+  decltype((i)) d;	// é”™è¯¯ï¼Œdä¸ºint&,å¿…é¡»åˆå§‹åŒ–
+  decltype(i) e;		// æ­£ç¡®
   ```
 
    
 
-## Sec3 ×Ö·û´®¡¢ÏòÁ¿ºÍÊý×é
+## Sec3 å­—ç¬¦ä¸²ã€å‘é‡å’Œæ•°ç»„
 
 ### 3.1 using
 
@@ -316,17 +316,17 @@ using namespace::name
 
 ### 3.2 string:
 
-* ³õÊ¼»¯£º
+* åˆå§‹åŒ–ï¼š
   ```
   string s1;
   string s2(s1);
   string s2 = s1;
   string s3("value");
-  string s3 = "value";	// ¿½±´³õÊ¼»¯ £¨ÓÃÁËµÈºÅ = £©
+  string s3 = "value";	// æ‹·è´åˆå§‹åŒ– ï¼ˆç”¨äº†ç­‰å· = ï¼‰
   string s4(n,"c");
   ```
 
-* ²Ù×÷
+* æ“ä½œ
   ```
   os<<s
   is>>s
@@ -342,7 +342,7 @@ using namespace::name
   ```
 
 
-* cctypeÍ·ÎÄ¼þ
+* cctypeå¤´æ–‡ä»¶
   ```
   isalnum(c)
   isalpha(c)
@@ -353,7 +353,7 @@ using namespace::name
   isxdigit(c)
   ```
 
-* ²Ù×÷Ã¿Ò»¸ö×Ö·û
+* æ“ä½œæ¯ä¸€ä¸ªå­—ç¬¦
   ```c++
   for(declaration : expression){
   	statement;
@@ -361,7 +361,7 @@ using namespace::name
   ```
 
   ```c++
-  // Àý×Ó£º
+  // ä¾‹å­ï¼š
   string str("swafasgdsvsaefwqa");
   for(auto c : str)
   	cout << c << endl;
@@ -370,33 +370,33 @@ using namespace::name
 ### 3.3 Vector
 
  `vector<int> ivec;|`
-vectorÊÇÄ£°å£¬²¢·ÇÀàÐÍ£¡
+vectoræ˜¯æ¨¡æ¿ï¼Œå¹¶éžç±»åž‹ï¼
 
-* ³õÊ¼»¯£º
+* åˆå§‹åŒ–ï¼š
 
-  1. ÁÐ±í³õÊ¼»¯
-     Ö»ÄÜÓÃ»¨À¨ºÅ
-  2. ¿½±´³õÊ¼»¯
+  1. åˆ—è¡¨åˆå§‹åŒ–
+     åªèƒ½ç”¨èŠ±æ‹¬å·
+  2. æ‹·è´åˆå§‹åŒ–
 
-  3. ´´½¨Ö¸¶¨ÊýÁ¿µÄÔªËØ
-  4. Öµ³õÊ¼»¯
-     ½öÖ¸¶¨ÔªËØÊýÁ¿
-     µ«½ÓÏÂÀ´Ö»ÄÜÓÃÖ±½Ó³õÊ¼»¯£¬¶øÇÒÓÐµÄÀàÒ»¶¨Òª³õÊ¼»¯Ö¸¶¨Öµ£¡
+  3. åˆ›å»ºæŒ‡å®šæ•°é‡çš„å…ƒç´ 
+  4. å€¼åˆå§‹åŒ–
+     ä»…æŒ‡å®šå…ƒç´ æ•°é‡
+     ä½†æŽ¥ä¸‹æ¥åªèƒ½ç”¨ç›´æŽ¥åˆå§‹åŒ–ï¼Œè€Œä¸”æœ‰çš„ç±»ä¸€å®šè¦åˆå§‹åŒ–æŒ‡å®šå€¼ï¼
 
   ```c++
-  // Çø±ð
+  // åŒºåˆ«
   vector<int> v1(10);
   vector<int> v2{10};
   vector<int> v3(10,1);
   vector<int> v4{10,1};
-  // ×¢ÒâÒªÊÇ²»Í¬ÀàÐÍ
-  vector<string> v5{"hi"};	// ÁÐ±í³õÊ¼»¯
-  vector<string> v6("hi");	// ´íÎó£¬²»ÄÜÓÃ×Ö·û´®×ÖÃæÖµ¹¹½¨vector¶ÔÏó
+  // æ³¨æ„è¦æ˜¯ä¸åŒç±»åž‹
+  vector<string> v5{"hi"};	// åˆ—è¡¨åˆå§‹åŒ–
+  vector<string> v6("hi");	// é”™è¯¯ï¼Œä¸èƒ½ç”¨å­—ç¬¦ä¸²å­—é¢å€¼æž„å»ºvectorå¯¹è±¡
   vector<string> v7{10};
   vector<string> v8{10, "hi"};
   ```
 
-* »ù±¾²Ù×÷
+* åŸºæœ¬æ“ä½œ
   ```c++
   v.empty()
   v.size()
@@ -405,21 +405,21 @@ vectorÊÇÄ£°å£¬²¢·ÇÀàÐÍ£¡
   ```
 
 * ```
-  vector<int>::size_type // ÕýÈ·
-  vector::size_type; // ´íÎó
+  vector<int>::size_type // æ­£ç¡®
+  vector::size_type; // é”™è¯¯
   ```
 
-* ²»ÄÜÓÃÏÂ±êÐÎÊ½Ìí¼ÓÔªËØ
+* ä¸èƒ½ç”¨ä¸‹æ ‡å½¢å¼æ·»åŠ å…ƒç´ 
 
-### 3.4 µü´úÆ÷
+### 3.4 è¿­ä»£å™¨
 
 * ```
   v.begin()
-  v.end()			// Î²ºóµü´úÆ÷,off the end. Ö¸ÏòÈÝÆ÷µÄÒ»¸ö±¾²»´æÔÚµÄÎ²ºó
-  ÈôÈÝÆ÷Îª¿Õ£¬Ôòv.begin() == v.end()
+  v.end()			// å°¾åŽè¿­ä»£å™¨,off the end. æŒ‡å‘å®¹å™¨çš„ä¸€ä¸ªæœ¬ä¸å­˜åœ¨çš„å°¾åŽ
+  è‹¥å®¹å™¨ä¸ºç©ºï¼Œåˆ™v.begin() == v.end()
   ```
 
-* µü´úÔËËã·û
+* è¿­ä»£è¿ç®—ç¬¦
   ```c++
   *iter
   iter->mem
@@ -429,81 +429,81 @@ vectorÊÇÄ£°å£¬²¢·ÇÀàÐÍ£¡
   iter1 != iter2
   ```
 
-* Ê¹ÓÃ£º
+* ä½¿ç”¨ï¼š
   ```c++
   string s("awefdwafefga");
-  if(s.begin() != s.end())	// ÈôÈÝÆ÷·Ç¿Õ
+  if(s.begin() != s.end())	// è‹¥å®¹å™¨éžç©º
   {
-      auto iter = s.begin();	// ¶¨Òåµü´úÆ÷±äÁ¿
-      *iter = touppper(*iter);// ½âÒýÓÃÀ´Ö±½Ó·ÃÎÊ
+      auto iter = s.begin();	// å®šä¹‰è¿­ä»£å™¨å˜é‡
+      *iter = touppper(*iter);// è§£å¼•ç”¨æ¥ç›´æŽ¥è®¿é—®
   }
   ```
 
   ```c++
-  // ½«µÚÒ»¸öµ¥´Ê×ª»»Îª´óÐ´
+  // å°†ç¬¬ä¸€ä¸ªå•è¯è½¬æ¢ä¸ºå¤§å†™
   for(auto iter = s.begin(); iter != s.end() && !isspace(*iter); ++iter){
       *iter = toupper(*iter);
   }
   ```
 
-* µü´úÆ÷ÀàÐÍ
+* è¿­ä»£å™¨ç±»åž‹
 
-  const_iterator: Ö»¶Á²»Ð´
+  const_iterator: åªè¯»ä¸å†™
   iterator
-  Èç¹ûvector¶ÔÏó»òÕßstring¶ÔÏóÊÇÒ»¸ö³£Á¿£¬ÔòÖ»ÄÜÊ¹ÓÃconst_iterator
+  å¦‚æžœvectorå¯¹è±¡æˆ–è€…stringå¯¹è±¡æ˜¯ä¸€ä¸ªå¸¸é‡ï¼Œåˆ™åªèƒ½ä½¿ç”¨const_iterator
 
   ```c++
   vector<int> v;
   const vector<int> cv;
-  auto it1 = v.begin()	// it1µÄÀàÐÍÊÇvector<int>::iterator
-  auto it2 = cv.begin()	// it2µÄÀàÐÍÊÇvector<int>::const_iterator
+  auto it1 = v.begin()	// it1çš„ç±»åž‹æ˜¯vector<int>::iterator
+  auto it2 = cv.begin()	// it2çš„ç±»åž‹æ˜¯vector<int>::const_iterator
   ```
 
-  * beginºÍend ·µ»ØµÄ¾ßÌåÀàÐÍÓÉ¶ÔÏóÊÇ·ñÎª³£Á¿¾ö¶¨£º
+  * beginå’Œend è¿”å›žçš„å…·ä½“ç±»åž‹ç”±å¯¹è±¡æ˜¯å¦ä¸ºå¸¸é‡å†³å®šï¼š
     `const_iterator`
     `iterator`
-  * Èç¹ûÐèÒªÊÇ¶ÔÏóÖ»ÐèÒª¶Á²Ù×÷¶øÎÞÐèÐ´²Ù×÷¡£×îºÃÊ¹ÓÃ³£Á¿ÀàÐÍ¡£
+  * å¦‚æžœéœ€è¦æ˜¯å¯¹è±¡åªéœ€è¦è¯»æ“ä½œè€Œæ— éœ€å†™æ“ä½œã€‚æœ€å¥½ä½¿ç”¨å¸¸é‡ç±»åž‹ã€‚
     `cbegin()`
     `cend()`
-    ¿ÉÒÔ·µ»Ø³£Á¿ÀàÐÍµü´úÆ÷£¨²»¹Ü¶ÔÏóÊÇ²»ÊÇ³£Á¿
+    å¯ä»¥è¿”å›žå¸¸é‡ç±»åž‹è¿­ä»£å™¨ï¼ˆä¸ç®¡å¯¹è±¡æ˜¯ä¸æ˜¯å¸¸é‡
 
-* µü´úÆ÷µÄ½âÒýÓÃ
+* è¿­ä»£å™¨çš„è§£å¼•ç”¨
   ```
-  // ×¢Òâ£º
-  (*iter).mem ºÍ *iter.mem½á¹û²»Í¬¡£µãÔËËã·ûµÄÓÅÏÈ¼¶ÊÇ±È½âÒýÓÃÔËËã·û¸ü¸ßµÄ
-  (*it).empty();	// ½âÒýÓÃ£¬·ÃÎÊempty³ÉÔ±
-  *it.empty();	// ´íÎó£¬itÊÇ¸öµü´úÆ÷£¬Ã»ÓÐempty³ÉÔ±
+  // æ³¨æ„ï¼š
+  (*iter).mem å’Œ *iter.memç»“æžœä¸åŒã€‚ç‚¹è¿ç®—ç¬¦çš„ä¼˜å…ˆçº§æ˜¯æ¯”è§£å¼•ç”¨è¿ç®—ç¬¦æ›´é«˜çš„
+  (*it).empty();	// è§£å¼•ç”¨ï¼Œè®¿é—®emptyæˆå‘˜
+  *it.empty();	// é”™è¯¯ï¼Œitæ˜¯ä¸ªè¿­ä»£å™¨ï¼Œæ²¡æœ‰emptyæˆå‘˜
   
-  ¼ò»¯£º
-  (*it).mem µÈ¼ÛÓÚ it->mem
+  ç®€åŒ–ï¼š
+  (*it).mem ç­‰ä»·äºŽ it->mem
   ```
 
-* **Ä³Ð©¶Ôvector¶ÔÏóµÄ²Ù×÷»áÊ¹µü´úÆ÷Ê§Ð§**
-  * ²»ÄÜÔÚ·¶Î§forÑ­»·ÖÐÏòvector¶ÔÏóÌí¼ÓÔªËØ
-  * ÈÎºÎÒ»ÖÖ¿ÉÄÜ¸Ä±ävector¶ÔÏóÈÝÁ¿µÄ²Ù×÷£¬±ÈÈçpush_back£¬¶¼»áÊ¹¸Ãvector¶ÔÏóµÄµü´úÆ÷Ê§Ð§¡£
-    £¨·²ÊÇÊ¹ÓÃÁËµü´úÆ÷µÄÑ­»·Ìå£¬¶¼²»ÒªÍùµü´úÆ÷ËùÊôµÄÈÝÆ÷Ìí¼ÓÔªËØ£©
+* **æŸäº›å¯¹vectorå¯¹è±¡çš„æ“ä½œä¼šä½¿è¿­ä»£å™¨å¤±æ•ˆ**
+  * ä¸èƒ½åœ¨èŒƒå›´forå¾ªçŽ¯ä¸­å‘vectorå¯¹è±¡æ·»åŠ å…ƒç´ 
+  * ä»»ä½•ä¸€ç§å¯èƒ½æ”¹å˜vectorå¯¹è±¡å®¹é‡çš„æ“ä½œï¼Œæ¯”å¦‚push_backï¼Œéƒ½ä¼šä½¿è¯¥vectorå¯¹è±¡çš„è¿­ä»£å™¨å¤±æ•ˆã€‚
+    ï¼ˆå‡¡æ˜¯ä½¿ç”¨äº†è¿­ä»£å™¨çš„å¾ªçŽ¯ä½“ï¼Œéƒ½ä¸è¦å¾€è¿­ä»£å™¨æ‰€å±žçš„å®¹å™¨æ·»åŠ å…ƒç´ ï¼‰
 
-* µü´úÆ÷ÔËËã
+* è¿­ä»£å™¨è¿ç®—
   ```
   iter+n
   iter-n
   iter1 += n
   iter1 -= n
-  iter1 - iter2	// µü´úÆ÷Ïà»¥Ö®¼äµÄ¾àÀë
+  iter1 - iter2	// è¿­ä»£å™¨ç›¸äº’ä¹‹é—´çš„è·ç¦»
   ```
 
-  * Àý×Ó£¬µÃµ½µü´úÆ÷ÖÐ¼äµÄÔªËØ
+  * ä¾‹å­ï¼Œå¾—åˆ°è¿­ä»£å™¨ä¸­é—´çš„å…ƒç´ 
     ```
     auto mid = vi.begin() + vi.size() / 2
     ```
 
-    ¾àÀëµÄÀàÐÍ£º`difference_type`µÄ´ø·ûºÅÐÍÕûÊý
+    è·ç¦»çš„ç±»åž‹ï¼š`difference_type`çš„å¸¦ç¬¦å·åž‹æ•´æ•°
 
-  * Àý×Ó2£º¶þ·ÖËÑË÷£º
+  * ä¾‹å­2ï¼šäºŒåˆ†æœç´¢ï¼š
     ```c++
     // Binary search
-    // text ±ØÐëÊÇÓÐÐòµÄ
-    // begºÍend±íÊ¾ÎÒÃÇËÑË÷µÄ·¶Î§
+    // text å¿…é¡»æ˜¯æœ‰åºçš„
+    // begå’Œendè¡¨ç¤ºæˆ‘ä»¬æœç´¢çš„èŒƒå›´
     auto beg = text.begin(), end = text.end();
     auto mid = beg + (beg-end)/2;
     while(mid!=end && *mid!=sought){
@@ -515,7 +515,16 @@ vectorÊÇÄ£°å£¬²¢·ÇÀàÐÍ£¡
     }
     ```
 
-* 
+### 3.5 æ•°ç»„
+
+* å¤æ‚æ•°ç»„çš„å£°æ˜Ž
+  ```c++
+  int *ptrs[10];
+  int &refs[10];	// é”™è¯¯
+  int (*Parray)[10] = &arr;	//
+  ```
+
+  
 
 
 
