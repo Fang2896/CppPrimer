@@ -459,6 +459,14 @@ vector是模板，并非类型！
   auto it2 = cv.begin()	// it2的类型是vector<int>::const_iterator
   ```
 
+  * begin和end 返回的具体类型由对象是否为常量决定：
+    `const_iterator`
+    `iterator`
+  * 如果需要是对象只需要读操作而无需写操作。最好使用常量类型。
+    `cbegin()`
+    `cend()`
+    可以返回常量类型迭代器（不管对象是不是常量
+
 * 迭代器的解引用
   ```
   // 注意：
@@ -507,7 +515,7 @@ vector是模板，并非类型！
     }
     ```
 
-    
+* 
 
 
 

@@ -8,8 +8,8 @@ int main()
     string text = "dawdawdawdawdaw";
     char sought = 'w';
     // Binary search
-    // text å¿…é¡»æ˜¯æœ‰åºçš„
-    // begå’Œendè¡¨ç¤ºæˆ‘ä»¬æœç´¢çš„èŒƒå›´
+    // text ±ØĞëÊÇÓĞĞòµÄ
+    // begºÍend±íÊ¾ÎÒÃÇËÑË÷µÄ·¶Î§
     auto beg = text.begin(), end = text.end();
     auto mid = beg + (beg-end)/2;
     while(mid!=end && *mid!=sought){
@@ -17,6 +17,6 @@ int main()
             end = mid;
         else
             beg = mid + 1;
-        mid = beg + (end-beg)/2   
+        mid = beg + (end-beg)/2;
     }
 }
