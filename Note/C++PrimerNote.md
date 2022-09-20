@@ -518,13 +518,97 @@ vector是模板，并非类型！
 ### 3.5 数组
 
 * 复杂数组的声明
+  阅读方法，从内到外
+  
   ```c++
   int *ptrs[10];
   int &refs[10];	// 错误
-  int (*Parray)[10] = &arr;	//
+  int (*Parray)[10] = &arr;
+  int (&arrRef)[10] = arr;	// arrRef引用一个含有10个整数的数组
+  int *(&arry)[10] = ptr;		// array是数组的引用，该数组有10个指针
+  ```
+  
+* 访问数组
+  数组下标的类型：`size_t`
+
+  而且数组下标如果不是纯数字，就必须是constexper类型！！！！！
+  ```c++
+  unsigned cnt = 42;
+  constexpr unsigned sz = 42;
+  string bad[cnt];	// 错误，cnt不是常量表达式
+  int *parr[sz];		// 正确
   ```
 
-  
+  vector允许拷贝，数组不允许拷贝
+
+* 迭代器：
+  可以把指针看成是数组的迭代器
+  同样 数组也有begin和end
+
+  ```
+  c++11 std
+  int ia[] = {1,2,3,4,5,65};
+  int *beg = begin(ia);
+  int *last = end(ia);
+  ```
+
+* C风格字符串
+  ```
+  // function
+  strlen(p)
+  strcmp(p1,p2)	// 返回p1-p2的长度的正负
+  strcat(p1,p2)	// 将p2附加到p1后，返回p1
+  strcpy(p1,p2)	// 将p2拷贝给p1，返回p1
+  ```
+
+  * string和字符串数组相互转换
+    提供了c_str()成员函数
+
+    ```
+    string s("dawdadaw");
+    char *str = s;	// 错误
+    const char *str = s.c_str();	// 正确
+    ```
+
+* 多维数组的下标引用
+  ```
+  int (&row)[4] = ia[1]; // 把row绑定到ia的第二个4元素数组上
+  ```
+
+* 多维数组的for语句处理
+
+  * 用范围for语句
+
+  ```c++
+  size_t cnt = 0;
+  for(auto &row : ia)				// 因为要改变变量，所以要把控制变量row和col设置为引用
+  	for(auto &col : row) {
+          col = cnt;
+          ++cnt;
+      }
+  先访问ia的所有元素-->即大小为4的数组，再访问大小为4的数组
+  ```
+
+  为什么要用引用？？（避免数组被自动转成指针）
+  ```
+  for(auto row : ia)
+  	for(auto col : row)
+  		...
+  会报错！原因是第一个for循环的auto将row转化为指向整数的指针，而不是指向数组的指针！所以第二个for循环错误！
+  ```
+
+  **要使用范围for语句处理多维数组，除别最内层的循环外，其他所有循环的控制变量都应该是引用类型**
+
+  * 常规for语句
+    ```c++
+    for(auto p = begin(ia);p!=end(ia); ++p){
+    	for(auto q = begin(*p); q!=end(*p); ++q)
+    		cout << *q << ' '
+    	cout << endl;
+    }
+    ```
+
+    
 
 
 
