@@ -615,7 +615,7 @@ vector是模板，并非类型！
 
 
 
-## Sec4 逻辑和关系运算符
+## Sec4 表达式、逻辑和关系运算符
 
 * `&&`: 只有左边为真才对右边求值
   `||`: 只有左边为假才对右边求值
@@ -643,3 +643,99 @@ vector是模板，并非类型！
 * 移位运算符优先级
   不高不低。比算术运算符低，比关系运算符，赋值、条件运算符高
 
+
+
+## Sec5 语句
+
+### 5.1 简单语句
+
+* 空语句
+* 分号的使用
+* 复合语句
+  compound statement
+
+### 5.2 语句作用域
+
+* if, switch, while和for语句的控制结构内定义变量。
+  定义在控制结构当中的变量只在相应语句的内部可见
+
+### 5.3 条件语句
+
+* if-else
+* switch
+  记得写break和default
+  别在case里面定义可能会跨case的变量！
+
+### 5.4 迭代语句
+
+* while
+
+* for循环
+  ```c++
+  for(init-statement; condition; expression)
+      	statement;
+  ```
+
+  流程：先初始化，再判断条件，再执行statement，最后执行expression
+  再判断条件，...，循环往复，直到不满足条件
+
+* **（C++特性）范围for语句**
+
+  ```c++
+  for(declaration : expression)
+      	statement
+  ```
+
+  其中，expression必须为一个序列！（有begin和end成员）
+  declaration定义为一个变量，使得序列中的每个元素都能转换为该变量的类型。
+  （常常用auto，而且引用是一个好习惯，引用后可以对expression中的序列写操作）
+
+  * 不能通过范围for语句增加vector对象，因为会存储end()值！！！要是增加就会变得无效了！
+
+* do-while语句
+
+* 跳转语句
+
+  * break语句
+
+  * continueyuju
+
+  * goto语句
+    尽量别用
+
+    ```
+    goto label;
+    ```
+
+    labeled statement
+
+### 5.6 try语句块和异常处理
+
+* C++的异常处理：
+  * throw:
+    异常检测部分使用throw表达式来表示它遇到了无法处理的问题，我们说throw引发(raise)的异常
+  * try:
+    异常处理部分使用try语句块处理异常。
+    以try开始，以catch结束。(异常处理代码 exception handler)
+  * 一套异常类 exception class
+    用于在throw表达式和相关的catch子句之间传递异常的具体信息
+
+* throw表达式
+
+  ```c++
+  if(item1.isbn() != item2.isbn())
+      throw runtime_error("Data must refer to same ISBN");
+  ```
+
+* try语句块
+  ```c++
+  try{
+      program-statements
+  } catch (exception-declaration) {
+      handler-statements
+  } catch (exception-declaration) {
+      handler-s
+  }
+  ```
+
+  
