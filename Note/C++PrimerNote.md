@@ -2,6 +2,10 @@
 
 *开始时间: 9月4号*
 
+[TOC]
+
+
+
 ## Sec1 Begin
 
 ## Sec2 变量和基本类型
@@ -811,5 +815,273 @@ argv[4]="data0";
 argv[5]=0;			// 最后一个指针之后的元素保证为0
 ```
 
+#### 6.2.6 含有可变形参的函数
+
+* 编写能处理不同数量实参的函数：
+
+  * 如果所有的实参类型相同，可以传递一个名为initializer_list的标准库类型
+  * 如果实参的类型不同，可以编写一种特殊的函数。即可变参数模板
+
+* `initializer_list`
+  一种标准库类型，用于表示某种特定类型的值的数组
+
+  ```c++
+  initializer_list<T> lst;	// 默认初始化，T类型元素的空列表
+  initializer_list<T> lst{a,b,c...}
+  							// lst的元素数量和初始值一样多，lst的元素是对应初始值的副本，列表中迭代元素是const
+  lst2(lst);					// 拷贝或者赋值不回拷贝列表中的元素，而是原始列表和副本共享元素
+  lst2 = lst;
+  lst.size();
+  lst.begin();lst.end();
+  ```
+  
+  `initializer_list` 永远是常量值
+
+* 省略符形参
+  仅仅用于C于C++通用的类型！
+
+  ```c++
+  void foo(parm_list,...); // 省略符之后的形参不会执行类型检查
+  void foo(...);
+  ```
+
+### 6.3 返回类型和returen语句
+
+* 返回
+  * 无返回值函数
+  * 有返回值函数
+
+* 如何返回值
+  返回的值用于初始化调用点的一个临时变量
+
+* 返回的注意事项
+  **不要返回局部对象的引用或指针**
+  因为函数完成后，所占用的存储空间也随之被释放掉
+
+  ```c++
+  const string &manip()
+  {
+      string ret;
+      if(!ret.empty())
+          return ret;			// 错误，返回局部对象的引用
+     	else
+          return "empty";		// 错误，empty是一个局部临时量
+  }
+  ```
+
+* 返回类类型的函数和调用运算符
+  调用运算符的优先级和点和箭头运算符相等。且符合左结合律
+
+* 引用返回左值
+  调用一个返回引用的函数得到左值，其他返回类型为右值
+
+  ```c++
+  // 例子
+  char &get_val(string &str, string::size_type ix){
+      return str[ix];
+  }
+  int main(){
+      string s("a value");
+      cout << s << endl;
+      get_val(s, 0) = "A";
+      cout << s << endl;
+      return 0;
+  }
+  ```
+
+* 列表初始化返回值
+  很好用。
+  返回一个\{\}起来的值，然后用里面的值来初始化！
+
+* main的返回值
+  ```c++
+  return EXIT_FAILURE;
+  return EXIT_SUCCESS;
+  ```
+
+#### 6.3.3 返回数组指针
+
+函数可以返回数组的指针或者引用。
+```c++
+typedef int arrT[10];	
+using arrT = int[10];
+arrT* func(int i);		// func返回一个指向含有10个整数的数组的指针
+```
+
+```c++
+int arr[10];
+int *p1[10];
+int (*p2)[10] = &arr;
+```
+
+或者直接定义
+```c++
+type (*function(parameter_list))[dimension]	// 返回数组指针的函数
+```
+
+* 使用尾置返回类型
+  trailing return type
+  对返回值比较复杂的函数最有效
+
+  ```c++
+  auto func(int i) -> int(*)[10];
+  // 把函数返回类型放在->之后，并在前面用auto定义
+  ```
+
+* 或者用decltype
+
+### 6.4 函数重载 （重要）
+
+pass
 
 
+
+### 6.5 特殊用途语言特性
+
+* 三种函数相关的语言特性
+
+  * 默认实参
+    一旦某个形参被赋予了默认值，它后面的所有形参都必须有默认值
+    只能省略尾部的实参！！！
+
+    ```c++
+    window = screen(,,'?');	// 错误
+    ```
+
+    而且给定的作用域中，一个形参只能被赋予一次默认实参
+    只要表达式的类型可以转换为对应类型，该表达式就可以作为默认实参
+
+  * 内联函数
+
+  * constexper
+
+* 内联函数
+  可以避免函数调用的开销
+  `inline`
+
+* constexper函数
+  指能用于常量表达式（编译过程就能得到结果）的函数
+  函数返回类型以及所有形参的类型都得是字面值类型，而且**函数体中必须有且只有一条return语句**
+  会被隐式的展开为内联函数
+
+* 建议把内联函数和constexper函数放在头文件里面
+
+#### 6.5.3 调试帮助
+
+头文件保护
+
+* assert预处理宏
+  preprocessor marco
+
+  ```c++
+  assert(expr);
+  ```
+
+  先对expr求值，如果expr为0，则输出信息并终止程序执行。如果为真，则啥也不做
+
+* NDEBUG预处理变量
+  如果定义了 NDEBUG，则assert什么也不做。默认状态下没有定义NDEBUG，此时assert将执行运行时检查
+
+  ```c++
+  // 对调试有用的名字
+  __func__
+  __FILE__
+  __TIME__
+  __LINE__
+  __DATE__
+  ```
+
+  
+
+### 6.6 函数匹配
+
+```c++
+void f();
+void f(int);
+void f(int, int);
+void f(double, double = 3.14);
+```
+
+* 确定候选函数和可行函数
+  candidate function / viable function
+
+* 寻找最佳匹配
+  基本思想是，实参类型与形参类型越接近，匹配得越好
+
+* 含有多个形参的函数匹配
+  例如：
+  `f(42,2.56)`
+
+  * 可行函数为f(int,int), f(double, double)
+  * 确定最佳匹配的条件
+    * 该函数每个实参的匹配都不劣于其他可行函数所需要的匹配
+    * 至少有一个实参的匹配优于其他可行函数提供的匹配
+
+  * 故该调用具有二义性，拒绝并报错
+
+* 实参类型转换
+
+### 6.7 函数指针
+
+```c++
+// 比较两个string对象的长度
+bool lengthCompare(const string &, const string &);
+
+// pf指向一个函数，该函数的参数是两个const string的引用，返回值是bool类型
+bool (*pf)(const string &, const string &); // 未初始化
+```
+
+一定要写括号！如果不写的话，返回值就是一个指向bool类型的指针
+
+* 使用函数指针
+  当我们把函数名作为一个值使用的时候，该函数自动地转换成指针。
+
+  ```c++
+  pf = func;
+  pf = &func;	// &是可选的。这两条是等价的,而且func应该是bool类型的！返回类型要一致
+  // 调用
+  bool b1 = pf("hello", "good");
+  bool b2 = (*pf)("hello", "good");	// 这两条也是等价的
+  
+  ```
+
+* 重载函数的指针
+  通过指针类型决定选用哪个函数。指针类型必须与重载函数中的某一个精确匹配
+
+* 函数指针形参
+  ```c++
+  void useBigger(const string &s1, const string &s2, bool pf(const string &, const string &))
+  ```
+
+  * 可以用decltype和typedef来简化操作！
+    ```c++
+    // Func和Func2是函数类型
+    typedef bool Func(const string&, const string&);
+    typedef decltype(lengthCompare) Func2;	// 等价的类型
+    // FuncP和FuncP2是指向函数的指针
+    typedef bool (*FuncP)(const string&, const string&);
+    typedef decltype(lengthCompare) *FuncP2;	// 等价声明
+    
+    void useBigger(const string&, const string&, Func);		// 自动将Func转换为指针
+    void useBigger(const string&, const string&, FuncP2);	// 等价
+    ```
+
+* 返回指向函数的指针|
+  注意，不能返回一个函数！
+
+  ```c++
+  using F = int(int*, int);			// F为函数类型
+  using PF = int(*)(int*, int);		// PF为指针类型
+  ```
+
+  ```c++
+  PF f1(int);	// 正确
+  F f1(int);	// 错误
+  F *f1(int);	// 正确，与第一条等价，返回为指向函数的指针
+  
+  auto f1(int) -> int (*)(int*, int);	// 尾置返回类型
+  ```
+
+  
+
+  
