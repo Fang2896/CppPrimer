@@ -1085,3 +1085,127 @@ bool (*pf)(const string &, const string &); // 未初始化
   
 
   
+
+## Sec7 类
+
+* 类的基本思想是：
+
+  * 数据抽象 data abstraction
+    依赖接口 (interface) 和 实现 (implementation) 分离的编程技术
+
+  * 封装 encapsulation
+    封装实现了类的接口和实现的分离
+
+  类想要实现数据抽象和封装，首席按需要定义一个抽象数据类型 （abstract data type）
+  ADT
+
+### 7.1 定义抽象数据类型
+
+#### 7.1.1 / 7.1.2 关于Sales_data类的改进
+
+* 定义成员函数
+  可以定义在类内和类外。但是类内一定要有声明
+
+  * 定义在类内部的函数是隐式的inline函数
+
+* 引入`this`
+  成员函数通过一个名为`this` 额外隐式参数来访问调用它的哪个对象。当我们调用一个成员函数时，用请求该函数的对象地址初始化this
+
+  ```c++
+  // 例子：
+  total.isbn();
+  // 伪代码，用于说明调用成员函数的实际执行过程
+  Sales_data::isbn(&total)
+  ```
+
+  在成员函数内部，可以直接使用调用该函数的对象的成员！无须通过成员访问运算符来做到这一点。
+  任何对类成员的直接访问都被看作this的隐式引用。
+  this的目的总是指向这个对象。所以this是一个**常量指针！**
+
+* 引入`const`成员函数
+  ```c++
+  std::string isbn() const {return bookNo; }
+  ```
+
+  这里的const 的作用是修改隐式this指针的类型
+  默认情况下，this的类型是指向类类型非常量版本和常量指针。
+
+  * 因为this是隐式的，所以在哪儿将this声明成指向常量的指针就成为我们必须要面对的问题：
+    C++的做法是允许把const关键字放在成员函数的参数列表之后。这时候，紧跟在参数列表后面的const代表this是一个指向常量的指针。这样使用const的成员函数被称为 （const member function）常量成员函数
+
+    ```c++
+    // 伪代码，说明隐式的this指针是如何使用的
+    // 下面的代码是非法的。因为不能显式定义自己的this指针
+    // 此处的this是一个指向常量的指针，因为isbn是一个常量成员
+    std::string Sales_data::isbn(const Sales_data *const this)
+    {
+        return this->isbn;
+    }
+    ```
+
+    const 成员函数可以使用类中的所有成员变量，但是不能修改它们的值
+
+    * 最后再来区分一下 const 的位置：
+      - 函数开头的 const 用来修饰函数的返回值，表示返回值是 const 类型，也就是不能被修改，例如`const char * getname()`。
+      - 函数头部的结尾加上 const 表示常成员函数，**这种函数只能读取成员变量的值，而不能修改成员变量的值**，例如`char * getname() const`。
+
+* 类作用域和成员函数
+  ```c++
+  double Sales_data::avg_price() const {
+      if (units_sold)
+          return revenue / units_sold;
+      else
+          return 0;
+  }
+  ```
+
+* 定义一个返回this对象的函数
+  ```c++
+  Sales_data& Sales_data::combine(const Sales_data &rhs){
+  	units_sold += rhs.units_sold;
+      revenue += rhs.revenue;
+      return *this;	// 返回调用该函数的对象
+  }
+  ```
+
+  
+
+#### 7.1.3 定义类相关的非成员函数
+
+类常常需要辅助函数。但这些辅助函数并不属于类本身。
+
+
+
+#### 7.1.4 构造函数
+
+constructor
+
+* 默认构造函数 default constructor
+
+  * 如果存在类内的初始值，用它来初始化成员
+  * 否则，默认初始化该成员
+
+  当类没有声明任何构造函数时，编译器才会自动地生成默认构造函数
+
+* 定义构造函数
+  ```c++
+  struct Sales_data {
+      Sales_data() = default;	// 默认构造函数
+      Sales_data(const std::string &s, unsigned n, double p) :
+      			boookNo(s), units_sold(n), revenue(p*n) { }
+      Sales_data(std::istream &is);
+      ...
+  }
+  ```
+
+  `:` 后到函数体部分称为“构造函数初始值列表” (constructor initialize list)
+
+* 在类的外部定义构造函数
+  ```c++
+  Sales_data::Sales_data(std::istream &is)
+  {
+      read(is, *this);	// read的作用是
+  }
+  ```
+
+  我们在类的外部定义构造函数时，必须指名该构造函数是哪个类的成员。
