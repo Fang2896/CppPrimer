@@ -11,6 +11,15 @@ class Person
         string strAddress;
 
     public:
+        // constructor function
+        Person() = default;
+        Person(const string &name, const string &add){
+            strName = name;
+            strAddress = add;
+        }
+        Person(std::istream &is) { is >> *this; }
+    
+    public:
         string getName() const { return strName; }
         string getAddress() const { return strAddress; }
 }
