@@ -1585,6 +1585,144 @@ struct Data{
 
 ### 9.4 Vector对象如何增长？
 
+一次两倍
+
+
+
+
+
+## Sec10 泛型算法
+
+### 10.2 初识
+
+* `find(iter1, iter2, val)`
+
+* `accumulate(iter1, iter2, init_val)`
+
+* `equal(iter1_begin, iter1_end, iter2_begin)`
+
+* `fill(iter1, iter2, val)`
+  `fill_n(iter, size, val)`
+
+* `auto it = back_inserter(container);  // 创建一个迭代器`
+  `*it = val;  // 等价于直接调用push_back`
+
+  ```c++
+  vector<int> vec;
+  auto it = back_inserter(vec);	// 通过它赋值会将元素添加到vec
+  fill_n(it, 10, 0);
+  ```
+
+* `copy(iter_begin, iter_begin, iterDestination_begin)`
+  返回的是其目的位置迭代器(递增后)的值
+
+* `replace`
+  读入一个序列，将其中所有等于给定值的元素都改为另一个值
+  前俩为迭代器，表示输入序列，后俩个一个是要搜索的值，另一个是新值
+  `replace(iter_begin,iter_end,val_before,val_replace)`
+  如果希望原序列不变，可以用
+  `replace_copy(iter_begin, iter_end, save_iter, val_before, val_replace)`
+
+* `sort`
+
+  用  `<`  运算符来排序
+
+  消除重复单词
+  先用sort排序，将重复的元素相邻，再用`unique`标准库算法。使得不重复的元素出现在vector的开始部分。
+  用vector的erase成员来完成真正的删除操作
+
+  ```c++
+  void elimDups(vector<string> &words){
+      sort(words.begin(), words.end());
+      auto end_unique = unique(word.begin(), words.end());
+      words.erase(end_unique, words.end());
+  }
+  ```
+
+
+
+### 10.3 定制操作
+
+* 向算法传递函数
+  sort的第二个版本，第三个参数为一个**谓词  predicate**
+
+  * 谓词：一个可调用的表达式，返回结果是一个能用作条件的值。
+
+    * 分类：一元谓词 unary predicate(单一参数)  二元谓词 binary predicate(两个参数)
+
+    * 例子：
+      ```c++
+      bool isShorter(const string &s1, const string &s2){
+          return s1.size() < s2.size();
+      }
+      sort(words.begin(), words.end(), isShorter);
+      ```
+
+      
+
+* `stable_sort(iter1, iter2, func)`
+  稳定排序算法维持相等元素的原有顺序
+* `find_if(iter_begin, iter_end, func)`第三个参数必须是一元谓词
+  对输入序列每一个元素调用谓词，返回第一个使得谓词返回非0值的元素。如果不存在则返回尾迭代器 
+
+
+
+* lambda表达式
+  我们可以向一个算法传递任何类别的可调用对象 callable object
+
+  ```c++
+  [capture list](parameter list) -> return type { function body }
+  ```
+
+  一个lambda表达式表示一个可调用的代码单元。即未命名的内联函数
+
+  * capture list: 函数内定义的局部变量的列表，通常为空
+
+  * return type， parameter list 和 function body 与任何普通函数一样，分别表示返回类型、参数列表和函数体。
+    lambda必须用到尾置返回来指定返回类型
+    可以忽略**参数列表和返回类型**，但必须**永远包含捕获列表和函数体**
+
+    ```c++
+    auto f = [] {return 42};
+    f();	// 调用
+    ```
+
+  * 传递参数：
+    ```c++
+    [] (const string &a, const string &b)
+    	{ return a.size() < b.size(); }
+    ```
+
+  * 使用捕获列表
+
+    * 编写一个传递给find_if的可调用表达式，希望这个表达式能将输入序列中的每个string的长度与biggies函数中的sz参数的值进行比较
+      一个lambda将局部变量包含在其捕获列表中来指出将会使用这些变量，捕获列表指引lambda在其内部包含访问局部变量所需要的信息
+      ```c++
+      [sz] (const string &a) { return a.size() >= sz; }
+      ```
+
+      []中可以使用逗号分隔的名字列表，这些名字都是它所在函数中定义的。
+      一个lambda只有在其捕获列表中捕获一个它所在函数中的局部变量，才能在函数体中
+
+    * ```c++
+      auto wc = find_if(words.begin(), words.end(),
+      	[sz](const string &a)
+      		{ return a.size() >= sz; } )
+      ```
+
+* for_each:
+  此算法接受一个可调用对象，并对输入序列中每个元素调用此对象
+
+  ```c++
+  for_each(wc, words_end(), 
+          [](const string &s) {cout << s << " ";});
+  cout << endl;
+  ```
+
+#### 10.3.3 lambda捕获与返回
+
+
+
 
 
 
