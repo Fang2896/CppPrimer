@@ -1721,11 +1721,277 @@ struct Data{
 
 #### 10.3.3 lambda捕获与返回
 
+当向函数传递一个lambda时，同时定义了一个新类型和该类型的一个对象，传递的参数就是此编译器生成的类类型的未命名对象。
 
+* 捕获方式
 
+  * 值捕获
+    前提是变量可以拷贝
+    `[v1] { return v1; };`
 
+  * 引用捕获
+    `[&v1] { return v1; };`
 
+    ```c++
+    void biggies(vector<string> &words, 
+                vector<string>::size_type sz.
+                ostream &os = cout, char c = ' ')
+    {
+        for_each(words.begin(), words.end(), 
+                [&os, c](const string &s) { os << s << c});
+    }
+    ```
 
+    若函数返回一个lambda，则不能包含引用捕获
+
+  * 隐式捕获
+    `[=](cosnt string &s){return s.size() >= sz; };`
+    用=或者&，&告诉编译器采用捕获引用方式，=则采用值捕获方式，可以混合使用！
+    `[&, c]`  `[=-, &os]`
+
+* 可变lambda
+  值拷贝变量不会改变其值，如果希望改变一个被捕获的变量的值，就必须再参数列表首加上关键字mutable
+  `[v1] () mutable {return ++v1;}`  所以可变lambda可以省略参数列表
+
+* 指定lambda返回类型：
+  如果lambda体是单一的return语句，则返回一个条件表达式的结果，无须指定返回类型。若有多条，且没指定返回类型，就会被编译器推定为返回void。
+  定义lambda返回类型一定要用尾置返回类型
+
+  ```c++
+  [](int i) -> int 
+  { if (i < 0) return -i; else return i; }
+  ```
+
+* 参数绑定
+  如果捕获列表为空，可以用函数代替lambda。
+  但如果对于捕获局部变量的lambda，用函数来替换旧不是那么容易了。比如find_if的第三个参数
+
+* 标准库函数`bind`
+  可以将bind堪称一个通用的函数适配器，接受一个可调用对象，生成一个新的可调用对象来适应原对象的参数列表。
+  `auto newCallable = bind(callable, arg_list);`
+  arg_list为参数列表，对应给定的callable参数
+  其中，`_n`类型的名字，为占位符，表示newCallable的参数，占据了传递给newCallable的参数的位置，数值n表示生成的可调用对象中参数的位置，`_1`为newCallable的第一个参数。
+
+  * 例子:
+    ```c++
+    auto check6 = bind(check_size, _1, 6);
+    // 只有一个占位符表示check6只接受单一参数，占位符出现再arg_list的第一个位置，表示对应check_size函数的第一个参数，check6会将这个参数传递给check_size。
+    // 如：
+    string s = "dwafda";
+    bool b1 = check6(s);	// 调用check_size(s, 6)
+    // 此时因为只有一个参数，所以可以将check6用于基于lambda的find_if端调用
+    ```
+
+  * bind的参数
+    ```c++
+    auto g = bind(f, a, b, _2, c, _1);
+    // 生成一个新的可调用对象，有2个参数，分别用占位符_2和_1表示。这个新的可调用对象将它自己的参数作为第三个和第五个参数传递给f。 f的第一个第二个和第四个参数为a，b，c
+    // 即：
+    g(_1, _2);
+    // 等价于
+    f(a,b,_2,c,_1);
+    ```
+
+  * 实际应用例子
+
+    用bind重排参数顺序
+    ```c++
+    sort(words.begin(),words.end(), isShorter);
+    sort(words.begin,words.end(), bing(isShorter, _2, _1));
+    ```
+
+  * 注意：
+    bind拷贝其参数。如果我们希望传递给bind一个对象而又不拷贝它，那必须使用标准库函数ref
+    例子：
+
+    ```c++
+    // 错误！
+    for_each(words.begin(), words.end(), bind(print, os, _1, ' '));
+    // 正确
+    for_each(words.begin(), words.end(), bind(print, ref(os), _1, ' '));
+    ```
+
+### 10.4 再探迭代器
+
+* 种类
+  * 容器定义的迭代器
+  * 插入迭代器
+  * 流迭代器
+  * 反向迭代器：除了forward_list都有反向迭代器
+  * 移动迭代器
+
+#### 10.4.1 插入迭代器
+
+```c++
+it = t;			// it指的位置插入t
+*it, ++it, it++	// 不会做任何事，只会返回it
+```
+
+* `back_inserter`   (push_back)
+
+* `fornt_inserter` （push_front）
+
+* `inserter`创建一个使用insert的迭代器。此函数接受第二个参数，此参数必须是一个指定给定容器的迭代器。
+  然后元素插入到**给定迭代器所表示元素之前**
+
+* 工作过程:
+  ```c++
+  it = inserter(c, iter);	// 得到一个迭代器
+  *it = val;	// 插入到指定元素之前
+  // 相同的工作：
+  it = c.insert(it, val);	// it指向新加入的元素
+  ++it;					// 递增it使之指向原来的元素
+  ```
+
+  ```c++
+  list<int> lst == {1,2,3,4};
+  list<int> lst2, lst3; // 空list
+  // lst2包含4，3，2，1
+  copy(lst.cbegin(), lst.cend(), front_inserter(lst2));	// 插入迭代器
+  // lst3包含1，2，3，4
+  copy(lst.cbegin(), lst.cend(), inserter(lst3, lst3.begin()));
+  ```
+
+#### 10.4.2 iostream迭代器
+
+`istream_iterator`和`ostream_iterator`
+
+* 使用：
+
+  * 从迭代器范围构造vec
+    ```c++
+    istream_iterator<int> in_iter(cin), eof;	// 从cin读取int
+    vector<int> vec(in_iter, eof);
+    ```
+
+  * 使用算法操作流迭代器
+    ```c++
+    istream_iterator in(cin), eof;
+    cout << accumulate(in, eof, 0) << endl;
+    ```
+
+  * istream_iterator允许使用懒惰求值
+    当绑定到一个流时，标准库并不保证迭代器立刻从流读取数据，具体实现可以推迟从流中读取数据，知道我们使用迭代器时才真正读取。
+
+* ostream_iterator操作
+
+  * 输出值的序列
+    ```c++
+    ostream_iterator<int> out_iter(cout, " ");
+    for(auto e : vec)
+        *out_iter++ = e;	// 将元素写到cout
+    cout << endl;
+    ```
+
+    注意：out_iter可以忽略解引用和递增运算
+    ++，\* 实际上不做任何工作
+
+  * 或者直接调用copy来打印vec中的元素
+    ```c++
+    copy(vec.begin(), vec.end(), outer_iter);
+    cout << endl;	// 比循环打印简单
+    ```
+
+* 可以为任何定义了>> 的对象创建istream_iteraotr，同理<<
+
+#### 10.4.3 反向迭代器
+
+（除forward_list之外都支持）
+
+调用rbegin，rend，crbegin，crend来获得反向迭代器
+
+* 需要递减运算符
+
+* ```c++
+  // 在逗号分隔的列表中查找最后一个元素
+  auto rcomma = find(line.crbegin(), line.crend(),',');
+  ```
+
+* 注意，正常打印别用反向迭代器，不然会逆序输出
+  ```c++
+  cout << string(line.crbegin(), rcomma) << endl;
+  // 用base成员函数可以让rcomma转换为普通迭代器，能正向移动
+  ```
+
+  
+
+### 10.5 泛型算法结构
+
+* 依照算法所要求的迭代器操作，可以分为5个迭代器类别(iterator category)
+
+  * 输入迭代器
+    读取序列中的元素
+  * 输出迭代器
+    只写不读
+  * 前向迭代器
+    读写，一个方向，而且课已多次读写一个元素
+  * 双向迭代器
+    双向++--
+  * 随机访问迭代器
+    提供常量时间内访问序列中任意元素的额能力
+
+* 算法形参模式：
+  ```c++
+  arg(beg, end, other args);
+  arg(beg, end, dest, other args);
+  arg(beg, end, beg2, other args);	// 假定两个范围大小相同
+  arg(beg, end, beg2, end2, other args);
+  ```
+
+* 算法命名规范
+
+  * 使用重载形式传递一个谓词
+    ```c++
+    unique(beg, end);	// ==
+    unique(beg, end, comp);	// comp
+    ```
+
+  * `_if` 版本的算法
+
+    ```c++
+    find(beg, end, val);	// val第一次出现的位置
+    find(beg, end, pred);	// 查找第一个令pred为真的元素
+    ```
+
+  * 区分拷贝元素的版本和不拷贝的版本
+    ```c++
+    reverse(beg, end);
+    reverse_copy(beg, end, dest);	// 逆序拷贝进dest
+    ```
+
+  * 同时提供:
+    ```c++
+    remove_copy_if(v1.begin(), v1.end(), back_inserter(v2), 
+                  [](int i){ return i % 2; });
+    ```
+
+* 特定容器算法
+
+  list, forward_list
+  ```c++
+  lst.merege(lst2);	// 必须两个有序
+  lst.merge(lst2.comp);	 // 用给定的比较操作
+  lst.remove(val);
+  lst.remove_if(pred);
+  lst.reverse();
+  lst.sort();
+  lst.sort(cmp);
+  lst.unique();	// 使用 ==
+  lst.unique(pred);	// 使用给定的二元谓词
+  ```
+
+* splice 成员
+  链表数据结构所特有的
+
+  ```
+  lst.splice(args) （之前）或者 flst.splice_after(args) （之后）
+  args:
+  (p, lst2)
+  (p, lst2, p2)
+  (p, lst2, b, e)
+  ```
+
+  链表特有操作会改变容器。
 
 ## Sec13 拷贝控制
 
