@@ -2066,11 +2066,59 @@ c.reverse(n);
     * 程序不知道所需对象的准确类型
     * 程序需要在多个对象间共享数据
 
+* new和delete
 
+  * placement new：定位new
+    `int *p2 = new (nothrow) int;`
 
+  * delete:释放动态内存
+    释放一块并非new分配的内存，或者将相同的指针值释放多次，其行为是未定义的
 
+    * 一定要记得释放：
+      反例：
 
+      ```c++
+       Foo* factory(T arg){
+           return new Foo(arg);
+       }
+      
+      void use_factory(T arg) {
+          Foo *p = factory(arg);
+          // 使用了p但是没有delete
+      }	// p离开作用域，但p指向的内存没有释放！
+      ```
 
+    * 建议：
+      坚持只使用智能指针，可以避免所有这些问题
+
+    * delete一个指针后，指针值就变为无效了，虽然指针已经无效，但是再很多机器上指针仍然保存着已经释放了的动态内存的地址，delete之后指针变成孔璇指针，dangling pointer，即，指向一块曾经保存数据对象但现在已经无效的内存的指针
+
+* shared_ptr和new结合使用
+  可以用new返回的指针来初始化智能指针
+
+  ```c++
+  shared_ptr<T> p(q);
+  shared_ptr<T> p(u);	// uniuque_ptr u
+  shared_ptr<T> p(q, d);	// p接管了内置指针q指向的对象的所有权，而且p将使用可调用对象d，来代替delete （lambda)
+  p.reset();
+  p.reset(q);
+  p.reset(q, d);
+  ```
+
+  * 不要混合使用普通指针和智能指针
+
+* 可以用reset来将一个新的指针赋予一个shared_ptr
+  ```c++
+  if(!p.unique())
+      p.reset(new string(*p));	// 不是唯一用户，分配新的拷贝
+  *p += newVal;	// 唯一用户，可以改变对象的值
+  ```
+
+* 智能指针与异常
+  即使程序块过早结束，比如异常，也可以提早结束
+
+* 使用我们自己的释放操作
+  删除器 deleter
 
 
 
