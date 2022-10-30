@@ -1915,6 +1915,7 @@ it = t;			// it指的位置插入t
 
 * pair类型
   定义在头文件utility中。创建pair必须提供两个类型名。
+  
   * 比较操作：
     是先比较first再比较second的
 
@@ -1943,15 +1944,127 @@ value_type;		对于set，与key_type相同，对于map，为pair<const key_type,
 * 算法：
   通常不用泛型算法。通常用自己定义的find。要快得多（hash）
 
+* 添加元素
+
+  用insert，但是注意对于set和map来说，插入一个已经存在的元素对容器没有影响
+
+  * 注意，对map插入元素，元素必须是pair
+    ```c++
+    // 向word_count插入word的4种方法
+    word_count.insert({word, 1});
+    word_count.insert(make_pair(word, 1));
+    word_count.insert(pair<string, size_t>(word, 1));
+    word_count.insert(map<string, size_t>::value_type(word, 1));
+    ```
+
+  用insert会返回一个迭代器，第一个first包含指向具有指定关键字的元素，以及一个指示插入是否成功的bool值
+  如果bool值为false，可能是插入了重复的值
+
+  * 对于multi容器，接受单个元素的insert操作返回一个指向新元素的迭代器。无须返回bool值。
+
+* 删除元素
+  erase有3个版本：
+  * 传递一个迭代器
+  * 传递一个迭代器对
+  * 接受一个key_type参数，此版本删除所有匹配得给定关键字的元素，返回实际删除的元素数量
+
+* map的下标操作
+  ```c++
+  map<string, size_t> word_count;
+  word_count['Anna'] = 1;
+  ```
+
+  注：使用一个不在容器内的下标，会添加这个容器并赋值！
+  `c.at(k)`,单纯的访问关键字为k的元素，带参数检查
+
+  * 对map来说，迭代器解引用与下标运算返回的类型不是一样的
+    对map下标运算，会获得mapped_type对象，当解引用时，得到value_type对象
+
+* 访问元素
+  iset.find()：返回一个迭代器，如果找到就是指向找到，如果未找到就返回尾迭代器
+  关心特定元素是否已在容器。
+  iset.count()：返回元素个数
+
+* 注：下标操作和at操作，只适用于非const的map和unorder_map
+
+* lower_bound(k), upper_bound(k)
+  返回迭代器，指向第一个关键字 不小于/不大于 k的元素
+  则：使用相同的关键字调用l和u会得到一个迭代器范围！表示具有该关键字的范围
+
+* equal_rage(k)：
+  返回一个迭代器pair，表示关键字等于k的元素范围，若k不存在，则pair俩成员均为尾迭代器
+
+* 为什么建议对map使用find代替下标操作：
+  对map和unordered_map类型，如果下标访问一个不存在的元素，则会加入进去！！！！
 
 
 
+### 11.4 无序容器
+
+原理一般是哈希 hash
+
+* 操作：
+  find，insert等
+* 存储上组织为 桶
+  bucket
+  每个桶保存0或者多个元素
+
+```c++
+// 桶接口
+c.bucket_count();
+c.max_bucket_count();
+c.bucket_size(n);
+c.bucket(k);
+
+// 桶迭代
+local_iterator;	// 可以用访问桶中元素的迭代器版本
+const_local_iterator;
+c.begin(n), c.end();
+c.cbegin(n), c.cend();
+
+// 哈希策略
+c.load_factor();
+c.max_load_factor();
+c.rehash(n);
+c.reverse(n);
+```
+
+注意：hash函数是可重载的
 
 
 
+## Sec12 动态内存
 
+### 12.1 动态内存与智能指针
 
+* `new`：在动态内存中为对象分配空间，并返回一个指向该对象的指针
+  `delete`：接受一个指针，销毁对象，释放空间
 
+* 智能指针：
+  smart pointer
+  它负责自动释放所指向的对象
+
+  * `shared_ptr`
+    也是模板。要指定指向类型
+
+    ```c++
+    make_shared<T>(args);
+    shared_ptr<T>p(q);	// 会递增q中的计数器，q中的指针必须能转换为T*
+    p = q;				// 递减p的引用计数，递增q的引用计数，若计数为0，则释放
+    p.unique();
+    p.use_count();
+    ```
+
+  * 使用例子：
+    ```c++
+    auto p6 = make_shared<vector<string>>();
+    ```
+
+  * 使用动态内存的原因
+
+    * 程序不知道自己需要使用多少对象
+    * 程序不知道所需对象的准确类型
+    * 程序需要在多个对象间共享数据
 
 
 
