@@ -2119,6 +2119,96 @@ c.reverse(n);
 
 * 使用我们自己的释放操作
   删除器 deleter
+  
+  * 分配了资源，又没有定义析构函数来释放这些资源的类，可能会发生内存泄漏
+
+
+
+* unique_ptr
+  一个unique_ptr拥有它所指向的对象
+  某个时刻，只能有一个unique_ptr指向一个给定对象
+  定义的时候需要绑定给到一个new返回的指针上。且不支持普通的拷贝或赋值操作
+
+  ```c++
+  unique_ptr<string> p1<new string(":wdawdawdaw")>;
+  unique_ptr<string> p2(p1);	// 错误
+  unique_ptr<string> p3;	p3 = p2;	// 错误
+  ```
+
+  * release:
+    u放弃对指针的控制权，返回指针，并将u置为空
+
+    返回的指针通常用来初始化或者赋值另一个智能指针
+
+  * 注：我们可以拷贝或者赋值一个将要被销毁的unique_ptr。最常见的例子是从函数返回一个unique_ptr
+
+* `weak_ptr`
+  是一种不控制所指向对象生存期的智能指针。指向一个由shared_ptr管理的对象，将一个weak_ptr绑定到一个shared_ptr不会改变shared_ptr的引用计数
+
+### 12.2 动态数组
+
+* new和数组
+  ```c++
+  // 1
+  int *pia = new int[get_size()];
+  
+  // 2
+  typedef int arrT[42];
+  int *p = new arrT;
+  ```
+
+  * 初始化
+    ```c++
+    int *pia = new int[10];	// 未初始化
+    int *pia = new int[10]();	// 初始化为0
+    // 也可以列表初始化
+    ```
+
+  * 释放动态数组
+    ```c++
+    delete p;	// p 指向一个动态分配的对象或者空
+    delete [] pa;	// pa指向一个动态数组或者空	
+    // 第二个语句销毁pa指向数组的元素，并释放对应的内存。按逆序销毁
+    ```
+
+* 智能指针和动态数组
+  标准库提供了一个可以管理new分配的数组的unique_ptr版本
+
+  ```c++
+  unique_ptr<int[]> up(new int[10]);	// up指向一个包含10个未初始化int 的数组
+  up.release();	// 自动用delete[] 销毁其指针
+  ```
+
+  注意：shared_ptr不直接支持管理动态数组/。必须提供顶一个删除器
+
+* allocator类
+  定义在头文件memory中，帮助我们将内存分配和对象构造分离开。
+
+  ```c++
+  allocator<string> alloc;			// 可以分配string的allocator对象
+  auto const p = alloc.allocate(n);	// 分配n个未初始化string
+  ```
+
+  * allocator分配未构造的内存
+    我们按需要再此内存中构造对象。
+    construct成员函数接受一个指针和0个或者多个额外参数
+  * 用完对象后，必须对每个构造的元素调用destroy来销毁。destory接受一个指针，对指向的对象执行析构函数
+  * 释放内存通过调用deallocate来完成。
+
+* 拷贝和填充未初始化内存的算法
+  ```c++
+  uninitialized_copy(b, e, b2);
+  uninitialized_copy_n(b, n, b2);
+  
+  uninitialized_fill(b, e, t);
+  uninitialized_fill_n(b, n, t);
+  ```
+
+  
+
+
+
+
 
 
 
