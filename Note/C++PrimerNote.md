@@ -2204,13 +2204,10 @@ c.reverse(n);
   uninitialized_fill_n(b, n, t);
   ```
 
+* 使用标准库实例：文本查询程序
+  TextQuery
+
   
-
-
-
-
-
-
 
 ## Sec13 拷贝控制
 
@@ -2222,3 +2219,282 @@ c.reverse(n);
   * 移动构造函数 move constructor
   * 移动赋值运算符 move-assignment operator
   * 析构函数 destructor
+
+### 13.1 拷贝、赋值与销毁
+
+* 拷贝构造函数
+  ```c++
+  class Foo {
+  public:
+      Foo();				// 默认构造函数
+      Foo(const Foo&);	// 拷贝构造函数
+  }
+  ```
+
+  **拷贝构造函数第一个参数必须是引用类型，而且基本上是const 的引用**
+
+  **而且，在几种情况都会被隐式地使用，所有通常不应该为explict**
+
+  * 合成拷贝构造函数 synthesized copy constructor
+    
+  * 拷贝初始化
+  
+    * 直接初始化时，本质是函数匹配
+  
+    * 拷贝初始化时，本质是拷贝，可能还有类型转换
+  
+    * 注意：
+      ```c++
+      string s1(dots);	// 直接初始化
+      string s2 = dots;	// 拷贝初始化
+      ```
+  
+  * 参数和返回值
+    函数调用过程中，具有非引用类型的参数要进行拷贝初始化。
+    如果不是引用类型，调用永远不会成功（死循环）
+  
+* 拷贝赋值运算符
+  类可以要控制其对象如何赋值
+
+  ```c++
+  Sales_data trans, accum;
+  trans = accum;	// 使用Sales_data的拷贝赋值运算符
+  ```
+
+  * 重载赋值运算符
+    overloaded operator
+    本质上就是一个名为`operator=`的函数
+
+    ```c++
+    class Foo {
+    public:
+        Foo& operator=(const Foo&);	// 赋值运算符
+    }
+    ```
+
+    赋值运算符通常应该返回一个指向其左侧运算对象的引用
+
+  * 合成拷贝赋值运算符
+    与处理拷贝构造函数一样，如果一个类未定义自己的拷贝赋值运算符，编译器会为它生成一个合成拷贝赋值运算符 synthesized copy-assignment operator
+
+    ```c++
+    // 等价代码
+    Sales_data&
+    Sales_data::operator=(const Sales_data &rhs)
+    {
+        bookNo = rhs.bookNo;	// 调用 string::operator=
+        units_sold = rhs.units_sold;
+        revenue = rhs.reenue;
+        return *this;
+    }
+    ```
+
+
+
+* 析构函数
+  构造函数初始化对象的非static数据成员，而析构函数释放对象使用的资源，并销毁对象的非static数据成员。
+  **无返回值也无参数**
+
+  ```C++
+  class Foo {
+  public:
+      ~Foo();	// 析构函数
+      // ...
+  };
+  ```
+
+  如同构造函数有一个初始化部分和一个函数题，析构函数也有一个函数体和一个析构部分，但是析构函数是首先执行函数体，然后执行析构部分。即首先执行函数体，然后销毁成员，成员按初始化顺序逆序销毁。
+
+  析构函数中，析构部分是隐式的。成员销毁时发生什么完全依赖于成员的类型。
+  而且，隐式销毁一个**内置指针类型**的成员不会delete它所指向的对象
+  所以建议用智能指针
+
+  * 什么时候调用析构函数？
+
+  * 合成析构函数
+    ```c++
+    // 等价代码
+    class Sales_data {
+    public:	
+        ~Sales_data() { }
+        // 其他成员的定义
+    }
+    ```
+
+* 三/五法则
+  三个基本操作可以控制类的拷贝操作：
+
+  * 拷贝构造函数
+
+  * 拷贝赋值运算符
+
+  * 析构函数
+
+    
+
+  * 需要析构函数的类也需要拷贝和赋值操作
+    如果一个类需要一个析构函数，我们几乎可以肯定它也需要一个拷贝构造函数和一个拷贝赋值运算符 
+
+    ```c++
+    // 一个典型反例
+    class HasPtr {
+    public:
+        HasPtr(const std::string &s = std::string()):
+        ps(new std::string(s)), i(0) { }
+        ~HasPtr() {delete ps;}
+        // 错误，HasPtr需要一个拷贝构造函数和一个拷贝赋值运算符。
+    }
+    // 因为合成的拷贝构造和拷贝赋值运算符，这邪恶函数简单的拷贝指针成员，这意味着多个HasPtr对象可能指向相同的内存
+    ```
+
+    比如：
+    ```c++
+    HasPtr f(HasPtr hp) {
+        HasPtr ret = hp;
+        return ret;
+    }
+    // 此后，ret和hp都会销毁，但是指针指向的是同一个，这会使得delete俩次！！！！导致严重错误
+    ```
+
+  * 需要拷贝操作的类也需要赋值操作，反之亦然
+
+  * **使用=default**
+    可以将拷贝控制成员定义为=default来**显示地要求编译器生成合成的版本**
+
+    ```c++
+    class Sales_data {
+    public:
+        Sales_data() = default;
+        Sales_data(const Sales_data&) = default;
+        Sales_data& operator=(const Sales_data &);
+        ~Sales_data() = default;
+    };
+    Sales_data& Sales_data::operator=(const Sales_data &) = default;
+    ```
+
+    当类内用=default修饰成员的声明时，合成的函数将隐式地声明为内联的
+
+* 阻止拷贝
+  对某些类来说，拷贝构造函数和拷贝赋值运算符没有合理的意义。此时，定义类必须采用某种机制阻止拷贝或者赋值！
+
+  * 定义删除的函数
+    将拷贝构造函数和拷贝赋值运算符定义为删除的函数deleted function 来阻止拷贝
+
+    ```c++
+    struct NoCopy() {
+        NoCopy() = default;
+        NoCopy(const NoCopy&) = delete;	// 阻止拷贝
+        NoCopy &operator=(const NoCopy&) = delete;
+        ~NoCopy() = default;
+    }
+    ```
+
+    = delete通知编译器，我们不希望定义这些成员
+    注意，与=default不同，=delete必须出现在函数第一次声明的时候
+
+  * 析构函数不能是删除的成员
+
+  * 合成的拷贝控制成员可能是删除的
+
+  * private拷贝控制
+    新标准之前，类是通过其拷贝构造函数和拷贝赋值运算符声明为private来阻止拷贝
+
+### 13.2 拷贝控制和资源管理
+
+* 拷贝语义：
+  类像什么？
+
+  * 行为像一个值，则类也应该有自己的状态，副本和原对象独立
+  * 行为像一个指针，则共享状态，副本和原对象使用相同的底层数据
+
+  例子：HasPtr:里面有一个指针，如何拷贝指针成员，决定了类似的类，行为是类值行为还是类指针行为！
+
+* 行为像类的值
+
+  * 类值拷贝赋值运算符
+
+    * 注意事项：
+      如果将一个对象赋予它自身，赋值运算符必须能正确工作
+
+      大多数赋值运算符组合了析构函数和拷贝析构函数的工作
+
+    * 正确写法：
+      ```c++
+      HasPtr& HasPtr::operator=(const HasPtr &rhs) { 
+          auto newps = new string(*rhs.ps);   // 拷贝指针指向的对象
+          delete ps;                          // 销毁原string
+          ps = newps;
+          i = rhs.i;
+          return *this;
+      }
+      ```
+
+    * 错误写法：
+      ```c++
+      HasPtr&
+      HasPtr::operator=(const HasPtr &rhs) {
+          delete ps;
+          ps = new string(*(rhs.ps));
+          // 如果rhs和*this是同一个对象，我们就将从以释放的内存中拷贝数据！！！
+          i = rhs.i;
+          return *this;
+      }
+      ```
+
+* 行为像指针的值
+  对于行为像指针的值，我们需要为其定义拷贝构造赋值运算符，来拷贝指针成员本身而不是它指向的string。此时，析构函数不能单方面释放关联的string，只有当最后一个指向string的HasPtr销毁时，它才可以释放string。
+  另一个类展现类似指针的行为最好使用shared_ptr来管理类中的资源。
+  如果我们希望直接管理资源，=则可以使用引用计数，reference count。
+
+  * 引用计数的工作方式
+
+    * 除初始化对象，每个构造函数（除了拷贝构造函数）还要创建一个引用计数，来记录有多少对象正在创建对象共享状态。当我们创建一个对象时，只有一个对象共享状态，故计数器初始化为1
+    * 拷贝构造函数不分配新的计数器，而是拷贝给定对象的数据成员，包括计数器。拷贝构造函数递增共享的计数器，指出给定对象的状态又被一个新用户所共享
+    * 析构函数递减其计数器。若计数器为0则析构函数释放状态
+    * 拷贝赋值运算符递增右侧运算对象的计数器，递减左侧运算对象的计数器。如果左侧运算对象的计数器为0 ，则必须销毁。
+
+  * 计数器的实现：保存在动态内存中，每次拷贝指向计数器的指针
+
+  * 定义一个使用引用计数的类
+
+    ```c++
+    class HasPtr {
+    public:
+        HasPtr(const std::string &s = std::string()):
+         ps(new std::string(s)), i(0), use(new std::size_t(1)) { }
+        HasPtr(const HasPtr &p):
+         ps(p.ps), i(p.i), use(p.use) { ++*use; }
+        HasPtr& operator=(const HasPtr&);
+        ~HasPtr();
+    private:
+        std::string *ps;
+        int i;
+        std::size_t *use;	// 用来记录有多少个对象共享ps的成员
+    }
+    ```
+
+  * 类指针的拷贝成员 篡改 引用计数
+    ```c++
+    HasPtr::~HasPtr() {
+        if(--*use == 0) {
+            delete ps;
+            delete use;
+        }
+    }
+    
+    HasPtr& HasPtr::operator=(const HasPtr &rhs) {
+        ++*rhs.use;	// 递增右侧对象的引用计数
+        if(--*use == 0) {	// 递减左侧对象的引用计数
+            delete ps;
+            delete use;
+        }
+        ps = rhs.ps;
+        i = rhs.i;
+        use = rhs.use;
+        return *this;
+    }
+    ```
+
+
+### 13.3 交换操作
+
