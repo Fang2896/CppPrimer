@@ -2498,3 +2498,38 @@ c.reverse(n);
 
 ### 13.3 交换操作
 
+除了定义拷贝控制成员，管理资源的类通常还定义一个名为swap的函数。对那些与重排元素顺序的算法一起使用的类，定义swap是很重要的，这类算法需要交换两个元素时会调用swap。
+
+* 编写自己的swap函数（从交换值到交换指针）
+  ```c++
+  class HasPtr {
+      friend void swap(HasPtr&, HasPtr&);
+     	//
+  }
+  inline
+  void swap(HasPtr &lhs, HasPtr &rhs) {
+      using std::swap;
+      swap(lhs.ps, rhs.ps);	// 交换指针
+      swap(lhs.i, rhs.i);
+  }
+  ```
+
+* 函数应该调用swap，而不是std::swap
+
+  每个swap调用应该都是未加限定的，即每个调用都应该为swap而不是std::swap。如果存在特定版本swap，则会优先选择
+
+* **在赋值运算符中使用swap** （绝秒！）
+
+  定义swap的类通常用swap来定义它们的赋值运算符。这些运算符使用了一种名为拷贝并交换的技术，这种技术将左侧对象与右侧对象的一个副本进行交换
+  ```c++
+  HasPtr%  HasPtr::operator=(HasPtr rhs) {
+      swap(*this, rhs);
+      return *this;	// rhs被销毁，从而delete了rhs中的指针，即释放左侧对象原来的内存
+  }
+  ```
+
+### 13.4 拷贝控制示例
+
+* Message
+  
+* Folder
