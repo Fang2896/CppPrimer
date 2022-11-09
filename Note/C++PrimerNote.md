@@ -2615,3 +2615,294 @@ c.reverse(n);
 
 #### 13.6.2 移动构造函数和移动赋值运算符
 
+* 移动构造函数 - 移动赋值函数
+  对应：拷贝构造函数和拷贝赋值函数
+
+  * 类似拷贝构造函数，移动构造函数的第一个参数是该类类型的一个引用。不同于拷贝构造函数的是，这个引用参数在移动构造函数上是一个右值引用。与拷贝构造函数一样，任何额外的参数都必须有默认实参！
+
+  除了完成资源移动，移动构造函数还必须确保移动后源对象处于一个状态：销毁后是无害的。特别是，一旦资源完成移动，源对象必须不再指向被移动的资源，这些资源所有权已经归属于新创建的对像
+
+  * 例子：
+
+  ```c++
+  StrVec::StrVec(StrVec &&s) noexcept	// 移动操作不应抛出任何异常！
+      // 成员初始化接管s中的资源
+      : elements(s.elements), first_free(s.first_free), cap(s.cap)
+  {
+          // 令s进入这样的状态，对其运行析构函数是安全的
+          s.elements = s.first_free = s.cap = nullptr;
+      }
+  ```
+
+* 移动操作，标准库容器和异常
+  由于移动操作窃取资源，通常不分配任何资源。因此，移动操作通常不会抛出任何异常。所以通知标准库，用noexcept
+
+  ```c++
+  class StrVec {
+  public:
+      StrVec(StrVec&&) noexcept;	// 移动构造函数
+      // 其他成员的定义，如前
+  };
+  StrVec::StrVec(StrVec &&s) noexcept : /* 成员初始化器 */
+  	
+  ```
+
+* 移动赋值运算符
+  移动赋值运算符执行与析构函数和移动构造函数相同的工作。与移动构造函数一样，如果我们的移动赋值运算符不跑出异常，我们就应该将它标记为noexcept。
+  注意！移动赋值运算符也必须正确处理自赋值！
+
+  ```c++
+  StrVec &StrVec::operator=(StrVec &&rhs) noexcept
+  {
+      // 直接检测自赋值
+      if (this != &rhs) {
+          free();
+          elements = rhs.elements;
+          first_free = rhs.first_free;
+          cap = rhs.cap;
+          // 将rhs置于可析构状态
+          rhs.elements = rhs.first_free = rhs.cap = nullptr;
+      }
+      return *this;
+  }
+  ```
+
+  进行检查的原因是，此右值可能是move调用的返回结果！与其他任何赋值运算符一样，关键点是我们不能在使用右侧运算对象的资源之前就释放左侧运算对象的资源。
+
+* 移后源对象必须可解析
+  从一个对象移动数据并不会销毁此对象，但有时在移动操作完成之后，源对象会被销毁！故编写移动操作后，必须确保移动后源对象进入了一个可析构的状态！**通常将所有的指针成员置为nullptr来实现**
+  注意：**程序不应该依赖于移后源对象中的数据**、
+
+* 合成的移动操作
+  与拷贝操作不同，编译器不回位某些类合成移动操作。如果一个类定义了自己的拷贝构造函数、拷贝赋值运算符或者析构函数，编译器就不为他们合成移动构造函数和移动赋值运算符了。
+  若一个类没有移动操作，通过正常的函数匹配，类会使用对象的拷贝操作来代替移动操作
+  只有当一个类没有定义任何自己版本的拷贝控制成员，且类的每个非static数据成员都可以移动时，编译器才会为它合成移动构造函数或者移动赋值运算符。
+
+  * 例子：
+    ```c++
+    struct X {
+        int i;			// 内置类型可以移动
+        std::string s;	// string定义了自己的移动操作
+    };
+    struct hasX {
+        X mem;	// X有合成的移动操作
+    };
+    X x, x2 = std::move(x);			// 使用合成的移动构造函数
+    hasX hx, hx2 = std::move(hx);	// 使用合成的移动构造函数
+    ```
+
+    与拷贝操作不同，移动操作永远不会隐式定义为删除的函数！但如果我们显示要求编译器生成=default的移动操作，且编译器不能移动所有成员，则编译器会将移动操作定义为删除的函数。，
+
+    ```c++
+    // 假设Y为一个类，定义了自己的拷贝构造函数但未定义自己的移动构造函数
+    struct hasY {
+        hasY() = default;
+        hasY(hasY&&) = default;
+        Y mem;	// hasY 将有一个删除的移动构造函数
+    };
+    hasY hy, hy2 = std::move(hy);	// 错误：移动构造函数是删除的！
+    ```
+
+* 移动右值，拷贝左值
+
+  若一个类既有移动构造函数，也有拷贝构造函数，编译器用普通的函数匹配规则来确定使用哪个构造函数
+  移动构造函数接受一个&&，只能用于实参是（非static）右值的情形
+
+  ```c++
+  StrVec v1, v2;
+  v1 = v2;					// v2是左值，使用拷贝赋值
+  StrVec getVec(istream &);	// getVec返回一个右值
+  v2 = getVec(cin);			// getVec(cin)是一个右值，使用移动赋值
+  ```
+
+  如果没有移动构造函数，则右值也会被拷贝！
+
+* 拷贝并交换赋值运算符和移动操作
+  ```c++
+  class HasPtr {
+  public:
+      // 添加新的移动构造函数
+      HasPtr(HasPtr &&p) noexcept : ps(p.ps), i(p.i) {p.ps = 0;}
+      // 赋值运算符既是移动赋值运算符，也是拷贝赋值运算符
+      HasPtr& operator=(HasPtr rhs) {
+          swap(*this, rhs); return *this;
+      }
+  }
+  ```
+
+* 移动迭代器：
+  移动迭代器通过改变给定迭代器的解引用运算符的行为来适配此爹嗲气，移动迭代器与普通的迭代器相反，解引用生成一个右值引用！
+  可以和uninitialized_copy来使用，保证construct将会使用移动构造函数来构造元素（从而使得运行更快！）
+
+#### 13.6.3 右值引用和成员函数 (略)\*
+
+略
+
+
+
+## Sec14 重载运算与类型转换
+
+当运算符作用于类类型的运算对象时，可以通过运算符重载重新定义该运算符的含义。
+
+### 14.1 基本概念
+
+重载运算符是具有特殊名字的函数！名字由关键字operator和其后要定义的运算符号共同组成。重载的运算符也**包含返回类型、参数列表以及函数体**
+重载运算符函数的参数数量与该运算符作用的运算对象一样多了。
+如果一个运算符函数是成员函数，则它的第一个左侧运算对象绑定到隐式的this指针上。因此，成员运算符函数的显示参数数量比运算符的运算对象总数少一个。
+
+```c++
+// 错误，不能为int重定义内置的运算符
+int operator+(int, int);
+```
+
+* 直接调用一个重载的运算符函数
+  ```c++
+  // 一个非成员运算符函数的等价调用
+  data1 + data2;				// 普通的表达式
+  operator+(data1, data2);	// 等价的函数调用
+  ```
+
+* 某些运算符不应该被重载
+  关于运算对象求职顺序的规则无法应用到重载的运算符上。比如，逻辑与，逻辑或，逗号运算符
+  因为上述运算符的重载版本无法保留求值顺序，和/或 短路求值属性，故不建议重载他们。
+
+* 使用内置类型一致的含义
+
+* 赋值和复合赋值运算符
+  =运算符应该返回它左侧运算对象的一个引用！
+  重载的赋值运算应该继承而非违背其内置版本的含义
+
+* 选择成员或者非成员
+  当我们定义重载运算符时，必须首先决定是将其声明为类的成员函数还是声明为一个普通的非成员函数。
+  规则：
+
+  * `=` `[]` `->` 必须是成员
+  * 复合赋值运算符一般来说应该是成员，但并非是必须
+  * 改变对象状态的运算符或者与给定类型密切相关的运算符，如算数，相等性，关系和位运算符等。通常应该是成员
+  * 具有对称性的运算符可能转换任意一端的运算对象。例如算数，相等性，关系和位运算符。通常应该是普通的非成员函数
+
+  我们把运算符定义成成员函数时，**它的左侧运算对象必须是运算符所属类的一个对象！**
+  但如果不是成员类型，则可以任意位置！
+  比如string，只要有一个是string类型就行，因为都等价于operator+函数调用！
+
+### 14.2 输入输出运算符
+
+* `<<`
+  第一个形参是ostream对象的引用。
+  第二个形参一般是一个常量的引用，是我们想要打印的类的类型。
+  为了与常规一致，operator<<一般要返回它的ostream形参
+
+  ```c++
+  ostream &operator<<(ostream &os, const Sales_data &item) {
+      os << item.isbn() << " " << item.units_sold << " "
+          << item.revenue << " " << item.avg_price();
+    	return os;
+  }
+  ```
+
+  * 输出运算符尽量减少格式化操作
+    比如像内置的<<一样，不要打印换行符！
+
+  * 输入输出运算符必须是非成员函数
+    否则，左侧运算对象将是我们的类的一个对象
+
+    ```c++
+    Sales_data data;
+    data << cout;	// 如果operator<<是Sales_data的成员
+    ```
+
+    显然，上述代码很不好懂
+
+* `>>`
+  ```c++
+  istream &operator>>(istream &is, Sales_data &item) {
+      double price;
+      is >> item.bookNo >> item.units_sold >> price;
+      if(is)	// 检查输入是否成功
+      	item.revenue = item.units_sold * price;
+      else 
+          item = Sales_data();
+     	return is;
+  }
+  ```
+
+  * 输入时的错误
+    * 流含有错误类型的数据
+    * 文件末尾或者其他流错误
+
+* 算术和关系运算符
+  ```c++
+  Sales_data
+  operator+(const Sales_data &lhs, const Sales_data &rhs) {
+      Sales_data sum = lhs;
+      sum += rhs;
+      return sum;
+  }
+  ```
+
+* 相等运算符
+
+  ```c++
+  bool operator==(const Sales_data &lhs, const Sales_data &rhs) {
+      return lhs.isbn() == rhs.isbn() &&
+          	lhs.units_sold == rhs.units_sold &&
+          	lhs.revenue == rhs.revenue;
+  }
+  bool operator!=(const Sales_data &lhs, const Sales)data &rhs) {
+      return !(lhs == rhs);
+  }
+  ```
+
+* 关系运算符
+  通常情况下，关系运算符应该：
+
+  1. 定义顺序关系
+  2. 若类同时含有\=\=运算符，则定义一种关系令其与\=\=保持一致
+
+* 赋值运算符
+  ```c++
+  class StrVec {
+  public:
+      StrVec &operator=(std::initializer_list<std::string>);
+      // 其他成员定义....
+  };
+  
+  StrVec &StrVec::operator=(initializer_list<std::string> il) {
+      // alloc_n_copy分配内存空间并从给定范围内拷贝元素
+      auto data = alloc_n_copy(il.begin(), il.end());
+      free();
+      elements = data.first;
+      first_free = cap = data.second;
+      return *this;
+  }
+  ```
+
+  * 复合赋值运算符
+    复合赋值运算符不非得是类的成员。但还是倾向于在类里面定义。也得返回左侧运算对象的引用
+
+    ```c++
+    Sales_data& Sales_data::operator+=(const Sales_data &rhs) {
+        units_sold += rhs.units_sold;
+        revenue += rhs.revenue;
+        return *this;
+    }
+    ```
+
+* `[]` 下标运算符
+
+  ```c++
+  class StrVec {
+  public:
+      std::string& operator[](std::size_t n)
+      	{ return elements[n]; }
+      const std::string& operator[](std::size_t n) const
+     		{ return elemenets[n]; }
+  private:
+      std::string *elements;
+  }
+  ```
+
+  
+
+
+
