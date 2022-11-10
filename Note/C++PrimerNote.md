@@ -2902,7 +2902,279 @@ int operator+(int, int);
   }
   ```
 
+* `++  --`递增和递减运算符
+  并不要求递增和递减运算符必须是类的成员 
+  但因为它们改变的正好是操作对象的状态，所以建议将其设为成员函数
+
+  * 定义前置递增/递减运算符
+    ```c++
+    class StrBlobPtr {
+    public:
+        StrBlobPtr& operator++();
+        StrBlobPtr& operator--();
+    }
+    ```
+
+    为了与内置版本保持一致，前置运算符应该返回递增或者递减后的对象引用。
+
+    ```c++
+    StrBlobPtr& StrBlobPtr::operator++() {
+        check(curr, "increment past end of StrBlobPtr.");
+        ++curr;
+        return *this;
+    }
+    StrBlobPtr& StrBlobPtr::operator--() {
+    	--curr;
+        check(curr, "decrement past begin of StrBlobPtr");
+        return *this;
+    }
+    ```
+
+  * 区分前置和后置运算符
+    普通的重载形式无法区分这俩种情况。
+    为解决这个问题，后置版本接受一个额外的（不被使用的）int类型的形参。当使用后置运算符时，编译器为这个形参提供一个值为0的形参
+
+    ```c++
+    class StrBlobPtr {
+    public:
+        StrBlobPtr operator++(int);
+        StrBlobPtr operator--(int);
+    };
+    ```
+
+    为与内置版本保持一致，后置运算符应该返回对象的原值，返回的形式是一个值而非引用
+    ```c++
+    StrBlobPtr StrBlobPtr::operator++(int) {
+        StrBlobPtr ret = *this;
+        ++*this;	// 使用定义的前置++
+        return ret;
+    }
+    StrBlobPtr StrBlobPtr::operator--(int) {
+        StrBlobPtr ret = *this;
+        --*this;	// 使用定义的前置++
+        return ret;
+    }
+    ```
+
+    * 显示调用前置后置
+      ```c++
+      StrBlobPtr p(a1);
+      p.operator++(0);
+      p.operator++();
+      ```
+
+* `->   *`成员访问运算符
+
+  ```c++
+  class StrBlobPtr {
+  public:
+      std::string& operator*() const {
+          auto p = check(curr, "dereference past end.");
+          return (*p)[curr];
+      }
+      std::string* operator->() const {
+          return  &this->operator*();
+      }
+  }
+  ```
+
+  * 箭头运算符返回值的限定：
+    永远不能丢掉成员访问这个最基本的定义，当重载箭头的时候，可以改变的是箭头从哪个对象中获取成员，而箭头获取成员这一事实则永远不变
+    对于形如point->mem的表达式来说，point必须是指向类对象的指针或者是一个重载了operator->类的对象。根据point类型的不同，point->mem分别等价于：
+
+    ```c++
+    (*point).mem;			// 内置指针
+    point.operator()->mem;	// point是一个类的对象
+    ```
+
+    * 若point是指针，则应用内置的箭头运算符
+    * 若point是定义了->的类，则我们使用`point.operator->()`的结果来获取mem。
+
+* 函数调用运算符
+  如果类重载了函数调用运算符，则我们可以像使用函数一样使用该类的对象。因为这样的类同时可以存储状态，所以比普通函数相比更加灵活
+
+  ```c++
+  struct absInt {
+    	int operator()(int val) const {
+          return val < 0 ? -val : val;
+      }  
+  };
+  // 使用
+  int i = -42;
+  absInt absObj;
+  int ui = absObj(i);
+  ```
+
+  函数调用运算符必须是成员函数！
+
+  如果类定义了调用运算符，则该类的对象称为函数对象（function object）
+
+  * ```c++
+    class PrintString {
+    public:
+        PrintString(ostream &o = cout, char c = ' '):
+        	os(o), sep(c) { }
+        void operator() (const string &s) const { os << s << sep; }
+    private:
+        ostream &os;
+        char sep;
+    };
+    // 例子：
+    PrintString printer;
+    printer(s);
+    PrintString errors(cerr, '\n');
+    errors(s);
+    ```
+
+    函数对象可以作为泛型算法的实参。
+    
+  * lambda是函数对象
+    当我们编写了一个lambda后，编译器将该表达式翻译成一个未命名类的未命名对象，在lambda表达式产生的类中含有一个重载的函数调用运算符
+    
+    ```c++
+    stable_sort(words.begin()., words.end(),
+               [](const string &a, const string &b)
+                {return a.size() < b.size();});
+    // 等价于
+    class ShorterString {
+    public:
+        bool operator() (const string &s1, const string &s2) const
+        	{ return s1.size() < s2.size(); }
+    };
+    // 调用
+    stable_sort(words.begin(), words.end(), ShroterString());
+    ```
+    
+    * 表示lambda及相应捕获行为的类
+      当一个lambda表达式通过引用捕获变量的时候，将由程序负责福报lambda执行时引用所引用的对象确实存在，编译器可以直接使用该引用而无需在lambda产生的类中将其存储为数据成员。
   
-
-
-
+  
+  
+  * 标准库定义的函数对象
+  
+    * 例如：
+      plus类定义了一个函数调用运算符用于对一堆运算对象进行+的caozuo 
+      modulus类定义了%
+      equal_to定义了==
+  
+      ```c++
+      plus<string>;
+      plus<int>;
+      negate<int>;
+      // 使用
+      plus<int> intAdd;
+      sum = intAdd(10, 10)
+      ```
+  
+    * 标准库对象
+      ```c++
+      // 算术
+      plus<Type>; minus<Type>; multiplies<Type>; divides<Type>; modulus<Type>; negate<Type>;
+      // 关系
+      equal_to<Type>; not_equal<Type>; greater<Type>; greater_equal<Type>; less<Type>; less_equal<Type>;
+      // 逻辑
+      logical_and<Type>； logical_or<Type>; logical_not<Type>;
+      ```
+  
+      使用例子：
+      ```c++
+      sort(svec.begin(), svec.end(), greater<string>());
+      ```
+  
+      注意，标准库规定其函数对象对于指针同样使用！
+      ```c++
+      vector<string *> nameTable;
+      // 错误！
+      sort(nameTable.begin(), nameTable.end(),
+          [](string *a, string *b) { return a < b; });
+      // 正确
+      sort(nameTable.begin(), nameTable.end(),
+          less<string*>());
+      ```
+  
+  * 可调用对象与function
+    例子：构造一个计算器：使用函数表来存储这些可调用对象的指针
+  
+    ````c++
+    // 普通函数
+    int add(int i, int j) { return i+j; }
+    // lambda，产生一个未命名的函数对象类
+    auto mod = [](int i, int j) { return i % j; };
+    // 函数对象类
+    struct divide {
+        int operator() (int denominator, int divisor) {
+            return denominator / divisor;
+        }
+    }
+    map<string, int(*)(int, int)> binops;
+    // 添加
+    binops.insert({"+", add});
+    // 错误！mod不是一个函数指针
+    biops.insert（{"%", mod}）;
+    ````
+  
+    * 标准库function类型
+      定义在头文件<functional>中
+  
+      ```c++
+      function<T> f;
+      function<T> f(nullptr);
+      function<T> f(obj);	// f中存储可调用对象obj的副本
+      f;	// 可调用则真，否则假
+      f(args);	// 调用
+      // 参数
+      result_type;
+      argument_type;
+      first_argument_type;
+      second_argument_type;
+      ```
+  
+      例子：
+      ```c++
+      function<int(int, int)> f1 = add;
+      function<int(int, int)> f2 = divide();	// 函数对象类的对象
+      function<int(int, int)> f3 = // ... lambda函数
+      ```
+  
+      则可以重新定义map
+      ```c++
+      map<string, function<int(int, int)>> binops = {
+          {"+", add},		// 函数指针
+          {"-", std::minus<int>()},	// 标准库函数对象
+          {"/", divide()},	// 用户定义的函数对象
+          {"*", [](int i, int j) {return i*j;}},
+          {"%", mod}		// 命名了的lambda对象
+      };
+      ```
+  
+      我们不能直接将重载函数的名字存入function类型的对象中！
+      如果想解决二义性，则需要存储函数指针！而非函数名字。也可以用lambda来消除二义性
+  
+  ### 14.9 重载、类型转换与运算符
+  
+  类型转换运算符 conversion operator 是类的一种特殊成员函数，它负责将一个类类型的值转换为其他类型。
+  `operator type() const;`
+  
+  type表示某种类型，类型转换运算符可以面向任意类型进行定义。只要该类型可以作为函数的返回类型。
+  类型转换运算符既没有显示的返回类型，也没有形参，必须定义为类的成员函数。而且通常不应该改变转换对象的内容，故通常定义为const成员！
+  
+  例子：
+  ```c++
+  class SmallInt {
+  public:
+      SmallInt(int i = 0) : val(i)
+      {
+          if (i < 0 || i >> 255)
+              throw std::out_of_range("Bad Small Int value!");
+      }
+      operator int() const { return val; }
+  private:
+      std::size_t val;
+  }
+  SmallInt si;
+  si = 4;	// 隐式转换为SmallInt，然后调用SmallInt::operator=
+  ```
+  
+  注意：避免过度使用类型转换函数！
+  
+  
