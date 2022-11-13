@@ -3177,4 +3177,542 @@ int operator+(int, int);
   
   注意：避免过度使用类型转换函数！
   
+
+
+
+
+
+## Sec15 面向对象程序设计
+
+### 15.1 OOP: 概述
+
+object-oriented programming的核心思想是数据抽象,继承和动态绑定
+
+* 继承 inheritance
+  通过继承联系再一起的类构成一种层次关系. 通常层次关系的根部有一个基类 base class,其他类则直接或者间接地从基类继承而来,这些继承得到的类称为派生类 derived class.
+
+  * 在c++中,基类将类型相关的函数与派生类不做改变直接继承的函数区别对待. **对于某些函数,基类希望它的派生类个自定义适合自身的版本, 此时基类就将这些函数声明成虚函数 virtual fucntion**
+
+    派生类必须通过使用**类派生列表(class derivation list)**明确指出它是从哪个基类继承而来的.
+
+    * 类派生列表形式:
+      首先是一个冒号,后面紧跟以逗号分隔的基类列表
+
+    ```c++
+    // Quote类作为基类,Bulk_quote表示打折的书
+    class Quote {
+    public:
+        std::string isbn() const;
+        virtual double net_price(std::size_t n) const;
+    };
+    // 类派生列表示例:
+    class Bulk_quote : public Quote {
+    public:
+        double net_price(std::size_t) const override;
+    }
+    ```
+
+    **因为Bulk_quote在它的派生列表中使用了public关键字,因此我们完全可以把Bulk_quote的对象当成Quote的对象来使用.** **派生类必须在其内部对所有重新定义的虚函数进行声明.**
+
+* 动态绑定: dynamic binding
+  通过动态绑定,我们能用同一段代码分别处理Quote和Bulk_quote的对象.
+  比如一个print_total函数,参数是Quote,则即可以传Quote也可以传Bulk_quote,然后根据传的参数的类,来决定是调用哪个net_price
+
+### 15.2 定义基类和派生类
+
+先定义Quote类
+```c++
+class Quote {
+public:
+    Quote() = default;
+    Quote(const std::string &book, double sales_price) :
+    	bookNo(book), price(sales_price) { }
+    std::string isbn() const {return bookNo;}
+    // 派生类负责改写并使用不同的折扣计算法
+    virtual double net_price(std::size_t n) const
+    		{ return n * price; }
+    virtual ~Quote() = default;	// 对析构函数进行动态绑定
+private:
+    std::string bookNo;
+protected:
+    double price = 0.0;	// 代表普通状态下不打折的价格
+}
+```
+
+**在继承关系中,根节点的类通常都会定义一个虚折构函数.**
+
+* 成员函数与继承
+  派生类可以继承其基类的成员. 然而遇到net_price这样与类型相关的操作,派生类必须对其重新定义! 即:派生类必须对这些操作提供自己新定义从而override从基类继承而来的旧定义.
+  * C++语言中，基类必须将它的俩种成员函数区分开来，一种是基类希望其派生类进行覆盖的函数，另一种是基类希望派生类直接继承而不改变的函数
+    * 对于前者，基类通常定义为虚函数virtual：
+      当我们使用指针或者调用虚函数时，该调用将被动态绑定。根据引用或者指针所绑定的对象类型不同，该调用可能执行基类的版本，也可能执行某个派生类的版本。
+* 访问控制与继承
+  派生类可以继承定义在基类的成员，但是派生类的成员函数不一定有权访问从基类继承而来的成员。和其他使用基类的代码一样，派生类能访问public但不能访问private。
+  protected：派生类有权访问该成员，同时禁止其他用户访问。
+
+#### 15.2.2 定义派生类
+
+派生类必须通过使用类派生列表 class derivation list来明确指出它是从哪个基类继承而来的。派生类必须将其继承而来的成员种需要覆盖的那些重新声明。
+```c++
+class Bulk_quote : public Quote {
+public:
+    Bulk_quote() = default;
+    Bulk_quote(const std::string&, double, std::size_t, double);
+    // 覆盖基类的函数版本
+    double net_price(std::size_t) const override;
+private:
+    std::size_t min_qty = 0;
+    double discount = 0.0;
+};
+```
+
+访问说明符的作用是控制派生类从基类继承而来的成员是否对派生类的用户可见.
+
+* 派生类中的虚函数
+  派生类经常覆盖所继承的虚函数
+  派生类可以在它覆盖的函数前使用virtual。但也不是一定要这样做，c++11规定，可以在覆盖继承的虚函数的形参列表后面，或者在const关键字后面，或者在引用成员函数的引用限定符后面添加关键字`override`
+
+* 派生类对象及派生类向基类的类型转换
+
+  * 一个派生类对象包含多个组成部分：
+    * 一个含有派生类自己定义的（非静态）成员的子对象
+    * 以及一个与该派生类继承的基类对应的子对象
+
+  我们可以把派生类的对象当成基类对象来使用，而我们也能将基类的指针或引用绑定到派生类对象中的基类部分上。
+  这种转换通常称为派生类到基类derived-to-base 类型转换。编译器会隐式执行派生类到基类的转换！
+
+* 派生类构造函数
+  派生类不能直接初始化这些从基类继承而来的成员。也必须使用基类的构造函数来初始化它的基类部分
+
+  ```c++
+  Bulk_quote(const std::string& book, double p,
+            std::size_t qty, double disc) :
+  			Quote(book, p), min_qty(qty), discount(disc) { }
+  // 其他一致
+  };
+  ```
+
+* 派生类使用基类的成员
+  ```c++
+  double Bulk_quote::net_price(size_t cnt) const {
+      if(cnt >= min_qty)
+          return cnt * (1 - discount) * price;
+      else
+          return cnt * price;
+  }
+  ```
+
+  **遵循基类的接口！**
+
+* 继承和静态成员
+  如果基类定义了一个静态成员，则整个继承体系只存在该成员的唯一定义！
+
+  ```c++
+  class Base{
+  public:
+      static void statmem();
+  };
+  class Derived : public Base {
+      void f(const Derived&);
+  };
+  ```
+
+* 派生类的声明：
+  声明包含类名但是不包含派生列表！
+
+  ```c++
+  class Bulk_quote : public Quote;	// 错误，派生列表不能出现在这里
+  class Bulk_quote;					// 正确。
+  ```
+
+* 被用作基类的类
+  如果想将某个类用作基类，**则该类必须已经定义而非仅仅声明**
+  隐含了：类不能派生它本身！
+
+  * 直接基类 direct base
+  * 间接基类 indirect base
+    最终的派生类将包含它的直接基类的子对象以及每个间接基类的子对象
+
+* 防止继承的发生
+  加一个final
+
+  ```c++
+  class NoDerived final {
+      // ...
+  };
+  class Last final : Base {
+      // ...
+  };
+  ```
+
+#### 15.2.3 类型转换与继承
+
+我们可以将基类的指针或引用绑定到派生类对象上：
+例如：可以将Quote&指向一个Bulk_quote对象，也可以降一个Bulk_quote对象的地址赋给一个Quote*
+
+智能指针也支持**派生类向基类的类型转换**！
+
+* 静态类型和动态类型
+  当我们使用存在继承关系的类型时，必须降一个变量或其他表达式的静态类型static type 与该表达式表示对象的动态类型dynamic type区分开来。
+  * 静态类型：名字定义的类型。动态类型：依赖绑定的实参
+  * 如果表达式既不是引用也不是指针，则
+
+* 不存在基类向派生类的隐式类型转换
+* 在对象之间不存在类型转换
+
+
+
+### 15.3 虚函数
+
+当我们使用基类的引用或指针调用一个虚成员函数时会执行动态绑定。直到运行才知道到底调用了哪个版本的虚函数，所以所有虚函数都必须有定义。
+
+* 对虚函数的调用可能在运行时才被解析
+
+```tex
+C++ 的多态性
+OOP的核心思想是多态性polymorphism
+我们将具有继承关系的多个类型称为多态类型
+当且仅当对通过指针或者引用调用虚函数时，才会在运行时解析调用。也只有这种情况下对象的动态类型才有可能与静态类型不同
+```
+
+* 派生类中的虚函数
+  当我们在派生类中覆盖了某个虚函数时，可以再一次使用virtual关键字指出该函数的性质。但不是必须，因为一旦某个函数被声明为虚函数，则所有派生类均为虚函数！
+  一个派生类的函数如果覆盖了某个继承而来的虚函数，**则它的形参类型必须与被他覆盖的基类函数完全一致！** （否则会被认为是俩个不同的，独立的函数）
+  同样，派生类中虚函数的返回类型也必须与基函数类型匹配。但是如果返回类型是类本身的引用或者指针，上述规则无效。
+
+* `final`和`override`说明符
+
+  * `override`：
+    说明派生类中的虚函数，好处是一目了然
+
+    ```c++
+    struct B {
+        virtual void f1(int) const;
+        virtual void f2();
+        void f3();
+    };
+    struct D1 : B {
+        void f1(int) const override;	// 对
+        void f2(int) override;			// 错
+        void f3() override;				// 错
+        void f4() override;				// 错
+    };
+    ```
+
+  * `final`
+    若将函数定义为final，则之后任何尝试覆盖该函数的操作都会引发错误
+
+    ```c++
+    void f1(int) const final;	// 不允许后续的其他类覆盖f1(int)
+    ```
+
+* 虚函数和默认实参
+  如果某次函数调用给使用了默认实参，则该实参由本次调用的静态类型决定
+  即：如果我们通过基类的引用或者指针调用函数，则使用基类中定义的默认实参，即使实际运行的是派生类中的函数版本也是如此。此时，传入派生类的函数将是基类函数定义的默认实参，如果派生类函数依赖不同的实参，则程序结果将与我们预期不符
+  **所以，如果虚函数使用默认实参，则基类和派生类中定义的默认实参最好一致！**
+
+* 回避虚函数的机制
+  有时候，我们希望对虚函数的调用不要进行动态绑定，而是强迫其执行虚函数的某个特定版本，我们可以用作用域运算符实现这一目的！
+
+  ```c++
+  double undiscounted = baseP->Quote::net_price(42);
+  // 不管baseP指向啥，强行用Quote中的函数
+  ```
+
+  通常情况下，只有成员函数（或友元）中的代码才需要使用作用域运算符来回避虚函数的机制！
+
+
+
+### 15.4 抽象基类
+
+我们需要一个表示打折的概念的函数，net_price，我们可以将该函数定义为pure virtual 纯虚函数。从而令程序实现我们的设计意图。明确告诉用户这个函数是没有实际意义的，和普通的虚函数不一样，一个纯虚函数无需定义。我们通过在函数体的位置，书写=0就可以将一个虚函数定义为纯虚函数。其中，**=0只能出现在类内部的虚函数声明语句处！**
+
+```c++
+class Disc_quote : public Quote {
+public:
+    Disc_quote() = default;
+    Disc_quote(const std::string& book, double price,
+              std::size_t qty, double disc):
+    			Quote(book, price), 
+    			qunantity(qty), discount(disc) { }
+    double net_price(std::size_t) const = 0;	// 纯虚函数
+protected:
+    std::size_t quantity = 0;
+    double discount = 0.0;
+}
+```
+
+**注意：我们也可以为纯虚函数提供定义，但定义必须在类的外部！**
+
+* 含有纯虚函数的类是抽象基类。abstract base class
+
+  抽象基类负责定义接口，而后续的其他类可以覆盖该接口。**我们不能直接创建一个抽象基类的对象**
+  但我们可以定义Disc_quote派生的对象！前提是这些类覆盖了net_price寒湖是。
+  **Disc_quote的派生类必须给出自己的net_price定义，否则它们仍然是抽象基类！**
+
+* 派生类构造函数只初始化它的直接基
+  实现Bulk_quote:让他继承Disc_quote而非直接继承Quote
+
+  ```c++
+  class Bulk_quote : public Disc_quote {
+  public:
+      Bulk_quote() = default;
+      Bulk_quote(const std::string& book, double price,
+                std::size_t qty, double disc) :
+      	Disc_quote(book, price, qty, disc) { };
+      // 覆盖基类中的函数版本以实现一种新的折扣策略
+      double net_price(std::size_t) const override;
+  };
+  ```
+
+  这个版本，直接基类是Disc_quote,间接基类是Quote。每个Bulk_quote对象包含三个子对象：一个空的Bulk_quote部分，一个Disc_quote子对象和一个Quote子对象
+  各个类分别控制其对象的初始化过程，故即使Bulk_quote没有自己的数据成员，仍然需要提供结构四个参数的构造函数，该构造函数将实参传递给Disc_quote的构造函数，然后DIsc_quote继续调用Quote的构造寒湖是！
+
+**关键概念： 重构。在Quote的继承体系增加Disc_quote类是重构refactoring的一个典型示例！**
+
+**重构负责重新设计类的体系以便将操作和/或数据从一个类移动到另一个类。**
+
+### 15.5 访问控制与继承
+
+每个类分别控制自己的成员初始化过程。同时，每个类还分别控制着其成员对于派生类来说是否可访问accessible。
+
+* `protected`
+  希望与派生类共享，但是不想被其他公共访问的成员。
+
+  注意：**受保护的成员对于基类用户来说是不可访问的！但是对于派生类的成员和友元是可访问的**
+  而且：派生类的成员或者友元只能通过派生类 对象来访问基类的受保护成员。
+  派生类对于一个基类对象中的受保护成员没有任何访问特权
+
+  ```c++
+  class Base {
+  protected:
+      int prot_mem;
+  };
+  class Sneaky : public Base {
+      friend void clobber(Sneaky&);	// 能访问Sneaky::prot_mem
+      friend void clobber(Base&);		// 不能访问！
+      int j;							// 默认为private
+  };
+  // 正确, clobber 可以访问Sneaky对象的private和protected成员
+  void clobber(Sneaky &s) {s.j = s.prot_mem = 0;}
+  // 错误，clobber不能访问Base的protected成员
+  void clobber(Base &b) {b.prot_mem = 0;}
+  ```
+
+  上面这个例子，可能会很危险！因为派生类可以改变基类的protected成员!
+  想要阻止以上的用法，我们就需要规定，派生类的成员和友元只能访问派生类对象中的基类的部分受保护成员，对普通的基类对象中的成员不具有特殊的访问权限
+  即：**private成员对派生类无法访问！**
+
+* 公有、私有和受保护继承
+
+  ```c++
+  class Base {
+  public:
+      void pub_mem();
+  protected:
+      int prot_mem;
+  private:
+      char priv_mem;
+  };
+  struct Pub_Derv : public Base {	// 公共地继承
+      // 正确，派生类可以用protected成员
+      int f() { return prot_mem; }
+      // 错误，private成员对于派生类来说是不可访问的！
+      char g() { return priv_mem; }
+  };
+  struct Priv_Derv : private Base {	// 私有地继承
+      // private不影响派生类的访问权限
+      int f1() const { return prot_mem; }
+  }
+  ```
+
+  某个类对其继承而来的成员的访问权限受2个因素：
+
+  1. c基类中该成员的访问说明符
+  2. 派生类的派生列表中的访问说明符
+
+派生访问说明符对于派生类的成员及其友元能否访问其直接基类的成员无影响！
+对基类成员的访问权限只与基类中的访问说明符有关！
+比如Pub_Derv与Priv_Derv都能访问prot_mem，但都不能访问priv_mem.
+
+* **派生访问说明符还可以控制继承自派生类新类的访问权限**
+
+  ```c++
+  struct Pub_Derv : public Base {	// 公共地继承
+      //
+  }
+  struct Priv_Derv : private Base {	// 私有地继承
+      //
+  }
   
+  struct Derived_from_Public : public Pub_Derv {
+      // 正确：Base::prot_mem 在Pub_Derv中仍然是protected的
+      int use_base() { return prot_mem; }
+  };
+  struct Derived_from_Private : public Priv_Derv {
+      // 错误：Base::prot_mem 在Priv_Derv中是private的。因为是私有地继承！
+      int use_base() { return prot_mem; }
+  };
+  ```
+
+* 友元与继承：
+  友元关系不能传递！友元关系也不能继承！
+
+* 改变个别成员的可访问性
+  有时我们需要改变派生类继承的某个名字的访问级别，通过使用using声明可以达到这一目的：
+
+  ```c++
+  class Base {
+  public:
+      std::size_t size() const { return n; }
+  protected:
+      std::size_t n;
+  };
+  class Derived : private Base {	// 私有继承！
+  public:
+      // 保持对象尺寸相关的成员的访问级别
+      using Base::size;
+  protected:
+      using Base::n;
+  }
+  ```
+
+  因为Derived使用私有继承，所以继承而来的成员size和n是Derived的私有成员。然而，我们用using改变了这些成员的可访问性！
+  即：Derived的用户可以使用size，而Derived的派生类可以使用n。
+
+* 默认的继承保护级别
+
+  ```c++
+  class Base {} // 默认私有
+  struct D1 : Base {} // 默认public
+  class D2 : Base {}	// 默认private
+  ```
+
+
+
+### 15.6 继承中的类作用域
+
+如果一个名字在派生类的作用域内无法正确解析，则编译器将继续在外层的基类作用域中寻找该名字的定义
+
+* 编译时进行名字查找
+  派生类能用基类，但基类不能用派生类对象的成员！
+
+* 名字冲突与继承
+  派生类可以重新定义在其直接基类或者间接基类中的名字。此时定义在内层作用域（派生类）中的名字将隐藏定义在外层作用域的名字。
+
+* 可以通过作用域运算符来使用一个被隐藏的基类成员
+
+* 名字查找先于类型检查
+  声明在内层作用域的函数并不会重载声明在外层作用域的函数，只会直接隐藏外层函数，因此，定义派生类的函数也不会重载基类中的成员，只会直接隐藏。
+  如果内层作用域与外层作用域某个成员同名，则内层作用域在其隐藏该基类成员！**即使派生类成员与基类成员形参列表不一致！！！！**
+
+  ```c++
+  struct Base {
+      int memfcn();
+  };
+  struct Derived : Base {
+      int memfcn(int);
+  };
+  Derived d; Base b;
+  b.memfcn();
+  d.memfcn(10);
+  d.memfcn();	// 错误
+  d.Base::memfcn();
+  ```
+
+* 虚函数与作用域
+
+  我们现在可以理解为啥基类和派生类中的虚函数必须有相同的形参列表了。如果不同，则我们无法通过基类的引用或指针来调用派生类的虚函数
+  ```c++
+  class Base {
+  public:
+      virtual int fcn();
+  };
+  class D1 : public Base {
+  public:
+      // 隐藏基类的fcn，这个fcn不是虚函数
+      // D1继承了Base::fcn()的定义
+      int fcn(int);	// 形参不一致，所以没有覆盖，但隐藏了Base的fcn
+      virtual void f2();	//新的虚函数，与Base中的不一样
+  }
+  class D2 : public D1 {
+  public:
+      int fcn(int);	// 非虚函数。隐藏了D1::fcn(int)
+      int fcn();		// 覆盖了Base的虚函数fcn
+      void f2();		// 形参一样，所以覆盖了D1的虚函数f2
+  }
+  ```
+
+* 通过基类调用隐藏的虚函数
+
+  因为fcn是虚函数，所以编译器产生的代码将在运行时确定使用虚函数的哪个版本，**判断的依据是该指针所绑定对象的真实类型。**
+
+* 覆盖重载的函数
+  可以为重载的成员添加一条using声明语句。
+
+### 15.7 构造函数与拷贝控制
+
+#### 15.7.1 虚析构函数
+
+继承关系对基类拷贝控制最直接的影响就是基类通常应该定义一个虚析构函数。**这样就可以动态分配继承体系中的对象了**
+
+当我们delete一个动态分配的对象的指针时，将执行析构函数。如果指向继承体系的某个类型，则有可能出现指针的静态类型与被删除类型不符的情况。则，**我们通过基类中将析构函数定义为虚函数以确保执行正确的析构函数版本**
+
+只要基类的析构函数是虚函数，就能保证当我们delete基类指针时将运行正确的析构函数版本。
+
+```c++
+class Quote {
+public:
+    // 如果我们删除的是一个指向派生类对象的基类指针，则需要析构函数
+    virtual ~Quote() = default;	// 动态绑定析构函数
+};
+```
+
+* 虚析构函数将阻止合成移动操作
+
+#### 15.7.2 合成拷贝控制与继承
+
+* 派生类中删除的拷贝控制与基类的关系
+  * 基类中的默认构造函数、拷贝构造函数、拷贝赋值运算符、析构函数是被删除的，那么派生类也是被删除的
+  * 若基类中有一个不可访问或者删除掉的析构函数，则派生类中合成的默认和拷贝构造函数将是被删除的。因为编译器无法销毁派生类对象的基类部分
+  * 编译器不会合成一个删除掉的移动操作。
+
+#### 15.7.3 派生类的拷贝控制成员
+
+* 派生类析构函数
+  派生类析构函数只负责销毁由派生类自己分配的资源
+
+* 继承的构造函数
+
+  * 用using
+    对于基类的每个构造函数，编译器都生成一个与之对应的派生类构造函数。即，对于基类的每个构造函数，编译器都在派生类中生成一个形参列表完全相同的构造函数
+
+  重新定义Bulk_quote类，令其继承构造函数
+
+  ```c++
+  class Disc_quote: public Quote {
+  public:
+      Disc_quote(const string &book = "", double sales_price = 0.0, 
+                size_t qty = 0, double disc = 0.0 ) : 
+      		Quote(book, sales_price), quantity(qty), discount(disc) { }
+      double net_price(size_t cnt) const = 0;
+  protected:
+      size_t quantity;
+      double discount;
+  };
+  
+  class Bulk_quote : public Disc_quote {
+  public:
+      using Disc_quote::Disc_quote;	// 继承Disc_quote的构造函数
+      double net_price(size_t cnt) const {
+          if( cnt > quantity )
+              return cnt * (1-discount) * price;
+          else
+              return cnt * price;
+      }
+  };
+  ```
+
+  
+
+### 15.8 容器与继承
