@@ -3716,3 +3716,100 @@ public:
   
 
 ### 15.8 容器与继承
+
+当我们使用容器来存放继承体系中的对象时，通常必须采取间接存储的方式，因为不允许在容器中保存不同类型的元素，所以我们不能将具有继承关系的多种类型的对象直接存放在容器中。
+
+比如：定义一个vector，不能将Bulk_quote对象存放，因为我们不能将Quote转换为Bulk_quote!**反之亦然，派生类部分会忽略掉！**
+
+ 因此容器和存在继承关系的类型无法兼容！
+
+* 在容器中放置智能指针，而非对象！
+
+  当希望在容器中存放具有继承关系的对象，我们实际上存放的通常时基类的指针。和往常一样，这些指针所指对象的动态类型可能是基类类型，也可能是派生类类型！
+
+  ```c++
+  vector<shared_ptr<Quote>> basket;
+  basket.push_back(make_shared<Quote>("0-201-82470-1", 50));
+  basket.push_back(
+  	make_shared<Bulk_quote>("dwafawfwa", 50, 10, .25));
+  cout << basket.back()->net_price(15) << endl;
+  ```
+
+  此时调用的net_price依赖于指针所指对象的动态类型！
+
+  #### 15.8.1 编写Basket类为例子
+
+  ```c++
+  class Basket {
+  public:
+      // 使用合成的默认构造函数和拷贝控制成员
+      void add_item(const std::shared_ptr<Quote> &sale)
+      	{ items.insert(sale); }
+      // 打印每本书的总价和购物篮中所有书的总价
+      double total_receipt(std::ostream&) const;
+  private:
+      // 该函数用于比较shared_ptr，multiset成员需要用到
+      static bool compare(const std::shared_ptr<Quote> &lhs,
+                         const std::shared_ptr<Quote> &rhs)
+      { return lhs->isbn() < rhs->isbn(); }
+      // multiset保存多个报价，按照compare成员排序
+      std::multiset<std::shared_ptr<Quote>, decltype(compare)*>
+          			items(compare);	// compare是一个函数，比较函数！
+  }
+  
+  // 定义Basket的成员
+  // 注意这里的iter=items.upper_bound(*iter)，可以令我们跳过与当前关键字相同的所有元素。
+  double Basket::total_receipt(ostream &os) const {
+      double sum = 0.0;
+      for(auto iter = items.cbegin();
+         		iter != items.cend();
+         		iter = items.upper_bound(*iter)) {
+          sum += print_total(os, **iter, items.count(*iter));
+      }
+      os << "Total Sale: " << sum << endl;
+      return sum;
+  }
+  
+  ```
+
+  * 隐藏指针：
+    Basket的用户仍然必须处理动态内存。原因是add_item需要接受一个shared_ptr参数
+    下一步是重新定义add_item，使得它接受一个Quote对象而非shared_ptr，新版本的add_item负责处理内存分配。
+
+    ```c++
+    void add_item(const Quote& sale);	// 拷贝给定的对象
+    void add_item(Quote&& sale);		// 移动给定的对象
+    ```
+
+    唯一的问题是：add_item不知道要分配的类型
+
+    * 模拟需拷贝：
+      我们可以给Quote类添加一个虚函数，该函数将申请一份当前对象的拷贝
+
+      > ```c++
+      > class Quote {
+      > public:
+      >     virtual Quote* clone() const & { return new Quote(*this); }
+      >     virtual Quote* clone() &&
+      >     				{ return new Quote(std::move(*this)); }
+      > 	// 其他一致
+      > };
+      > class Bulk_quote : public Quote {
+      >     Bulk_quote* clone() const & { return new Bulk_quote(*this); }
+      >     Bulk_quote* clone() &&
+      >     				{ return new Bulk_quote(std::move(*this)); }
+      > 	// 其他一致
+      > };
+      > ```
+
+    * 利用clone很容易写出新版本的add_item
+      ```c++
+      class Basket {
+      public:
+          void add_item(const Quote& sale)	// 拷贝给定的对象
+          	{ items.insert(std::shared_ptr<Quote>(sale.clone())); }
+          void add_item(Quote&& sale)
+          	{ items.insert(
+              	std::shared_ptr<Quote>(std::move(sale).clone())); }
+          // 其它yi'zhi
+      }
