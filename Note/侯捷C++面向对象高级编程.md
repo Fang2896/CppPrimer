@@ -1,5 +1,11 @@
 # 侯捷C++面向对象高级编程
 
+[TOC]
+
+
+
+
+
 ## （上）
 
 
@@ -279,3 +285,117 @@ XCls<string, Lst> mylst2;
 
 ### 12. 关于C++标准库
 
+### 13. 三个主题
+
+* variadic template
+  数量不定的模板参数
+
+  ```c++
+  void print() {
+      // 0个的版本！当参数为0则调用这个版本！
+  }
+  
+  template<typename T, typename... Types>
+  void print(const T& firstArg, const Types&... args) {
+      cout << firstArg << endl;
+      print(args...);
+  }
+  ```
+
+  在variadic template中，`sizeof...(args)` 返回参数的数量！
+
+  * `...` : 就是所谓的pack（包）
+    * 用于template parameters就是模板参数包 template parameter pack
+    * 用于function parameter types就是function parameter types pack 函数参数类型包
+    * 用于function parameters 就是function parameters pack，函数参数类型包
+
+* `auto`
+  略
+
+* range base `for`
+  ```c++
+  fpr(decl : coll) {
+      statement
+  }
+  ```
+
+### 14. Reference
+
+感觉就是`int* const ptr;` 即，常量指针的解引用就是引用！因为引用不能变，常量指针指向的也不能变，但是引用可以改变值，常量指针指向的值也可以改变 ！
+
+reference通常不用于声明变量，而是用于参数类型parameters type和返回类型 return type的描述。
+
+* 函数签名：
+
+  函数名字+参数
+  
+
+### 15. 复合、继承关系下的构造和析构
+
+* Inheritance 继承关系下的构造和析构
+
+  * 构造由内而外
+    Derived的构造函数首先调用Base的default构造函数，然后才执行自己
+    `Derived::Derived(...) : Base() { ... };`
+
+  * 析构由外而内
+
+    Derived的析构函数首先执行自己，然后才调用Base的析构函数
+
+    `Derived::~Derived(...) { ... ~Base() };`
+
+* Composition（复合） 关系下的构造和析构
+
+  * 构造由内而外
+    Container的构造函数首先调用Component的default构造函数，然后才执行自己
+    `Container::Container(...) : Component() { ... };`
+  * 析构由外而内
+    Container的析构函数首先执行自己，然后才调用Component的析构函数
+    `Container::~Container(...) { ... ~Component() };`
+
+* Inheritance + Composition关系下的构造和析构
+  * 构造由内而外
+    Derived的构造函数首先调用Base的default构造函数，然后调用Component的default构造函数，然后执行自己
+  * 析构由外而内
+    Derive的析构函数首先执行自己，然后调用Component的析构函数，然后调用Base的析构函数
+
+### 16. 关于vptr和vtbl
+
+虚指针 / 虚表
+
+动态绑定！
+
+虚函数很有用
+
+
+
+### 17. 关于Dynamic Binding
+
+* 谈谈const
+  常量成员函数
+
+  当成员函数的const和non-const版本同时存在，const object只能调用const版本！
+  non-const object只能调用non-const 版本！
+
+
+
+### 18，19. 关于new和delete
+
+* new
+  先分配memory，再调用ctor
+* delete
+  先调用dtor，再释放memory
+
+* 如何重载`::operator new, ::operator delete, ::operator new[], ::operator delete[]`
+
+(重载的是全局的东西)
+
+* 重载`member operator new/delete`
+* 重载``member operator new[]/delete[]`
+
+* 示例：
+  ::new
+  ::delete
+  强制调用全局的函数
+
+  
