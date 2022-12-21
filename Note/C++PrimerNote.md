@@ -1468,16 +1468,22 @@ struct Data{
   ifstream in(ifile);	// 构筑一个ifstream并打开给定文件
   ofstream out;		// 输出文件流未与任何文件相关联
   out.open(ifile + ".copy");
-
-
+  
   if (out)	// 检测
-  ```
+  
+  /*  如果open失败，条件会未为假，就不会使用out
+    一旦一个文件流已经打开，它就保持与对应文件的关联。
+    要将文件流关联到另一个文件，必须先关闭已经关联的文件。一旦成功关闭，就可以	   打开新文件。
+  */
 
-  如果open失败，条件会未为假，就不会使用out
-  一旦一个文件流已经打开，它就保持与对应文件的关联。
-  要将文件流关联到另一个文件，必须先关闭已经关联的文件。一旦成功关闭，就可以打开新文件。
+
+  
 
 ### 8.3 stringstream
+
+暂略
+
+
 
 ## Sec9 顺序容器
 
@@ -1501,7 +1507,7 @@ struct Data{
   vector<int> vec;
   auto it = back_inserter(vec);	// 通过它赋值会将元素添加到vec
   fill_n(it, 10, 0);
-  ```
+
 * `copy(iter_begin, iter_begin, iterDestination_begin)`
   返回的是其目的位置迭代器(递增后)的值
 * `replace`
